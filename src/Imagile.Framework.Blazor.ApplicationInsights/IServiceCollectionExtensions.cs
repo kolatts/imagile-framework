@@ -1,6 +1,7 @@
 using Imagile.Framework.Blazor.ApplicationInsights.Interfaces;
 using Imagile.Framework.Blazor.ApplicationInsights.Logging;
 using Imagile.Framework.Blazor.ApplicationInsights.Models;
+using Imagile.Framework.Blazor.ApplicationInsights.Telemetry;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -91,6 +92,7 @@ public static class IServiceCollectionExtensions
         if (addWasmLogger && IsBrowserPlatform)
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ILoggerProvider, ApplicationInsightsLoggerProvider>(x => CreateLoggerProvider(x, loggingOptions)));
 
+        services.TryAddSingleton<ITelemetryInitializerFactory, DefaultTelemetryInitializerFactory>();
         services.TryAddSingleton<IApplicationInsights, ApplicationInsights>();
 
         return services;

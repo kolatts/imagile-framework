@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Imagile.Framework.Blazor.ApplicationInsights.Interfaces;
 using Imagile.Framework.Blazor.ApplicationInsights.Models;
+using Imagile.Framework.Blazor.ApplicationInsights.Telemetry;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Extensions.Logging;
@@ -36,6 +37,7 @@ public partial class ApplicationInsightsInit : ComponentBase, IDisposable
     [Inject] private ApplicationInsightsInitConfig Config { get; set; } = default!;
     [Inject] private ILogger<ApplicationInsightsInit> Logger { get; set; } = default!;
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+    [Inject] private ITelemetryInitializerFactory TelemetryInitializerFactory { get; set; } = default!;
 
     /// <summary>
     /// Gets or sets whether running in Blazor WASM Standalone mode.
@@ -83,6 +85,11 @@ public partial class ApplicationInsightsInit : ComponentBase, IDisposable
                 {
                     // Skip UpdateCfg for WASM standalone - config is already in the rendered snippet
                     // The SDK stub does not have updateCfg in its queue proxy, causing errors before SDK loads
+
+                    // Add telemetry initializer from factory for context injection
+                    var initializer = await TelemetryInitializerFactory.CreateInitializerAsync();
+                    await ApplicationInsights.AddTelemetryInitializer(initializer);
+
                     await ApplicationInsights.TrackPageView();
                 }
                 catch (Exception ex)

@@ -14,7 +14,14 @@
     <Description>Application Insights telemetry integration for Blazor WebAssembly with automatic page tracking and custom event support.</Description>
     <PackageTags>blazor;webassembly;applicationinsights;telemetry;monitoring;framework</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!-- Static web assets fingerprinting for JS module -->
+    <StaticWebAssetBasePath>_content/$(PackageId)</StaticWebAssetBasePath>
   </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Imagile.Framework.Blazor.ApplicationInsights.Tests" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
@@ -26,7 +33,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
 
 </Project>
