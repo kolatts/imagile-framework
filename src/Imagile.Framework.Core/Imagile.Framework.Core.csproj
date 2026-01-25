@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <IsTestProject>false</IsTestProject>
+
+    <!-- NuGet Package Metadata -->
+    <PackageId>Imagile.Framework.Core</PackageId>
+    <RootNamespace>Imagile.Framework.Core</RootNamespace>
+    <AssemblyName>Imagile.Framework.Core</AssemblyName>
+    <Description>Zero-dependency declarative attributes for building opinionated .NET applications. Contains association, metadata, and validation marker attributes.</Description>
+    <PackageTags>attributes;validation;metadata;declarative;enum;framework</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

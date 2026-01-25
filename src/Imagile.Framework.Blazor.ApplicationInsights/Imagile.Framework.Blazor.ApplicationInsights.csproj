@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <IsTestProject>false</IsTestProject>
+
+    <!-- NuGet Package Metadata -->
+    <PackageId>Imagile.Framework.Blazor.ApplicationInsights</PackageId>
+    <RootNamespace>Imagile.Framework.Blazor.ApplicationInsights</RootNamespace>
+    <AssemblyName>Imagile.Framework.Blazor.ApplicationInsights</AssemblyName>
+    <Description>Application Insights telemetry integration for Blazor WebAssembly with automatic page tracking and custom event support.</Description>
+    <PackageTags>blazor;webassembly;applicationinsights;telemetry;monitoring;framework</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Imagile.Framework.Core\Imagile.Framework.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+  </ItemGroup>
+
+</Project>
