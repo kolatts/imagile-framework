@@ -1,184 +1,373 @@
-# Imagile.Framework.EntityFrameworkCore.Testing - Claude Code Guide
+# CLAUDE.md
 
-This document provides guidance for working with the Imagile.Framework.EntityFrameworkCore.Testing library using Claude Code.
+This file provides workflow guidance to Claude Code when working with code in this repository.
+
+## Code Style and Conventions
+
+### Naming Standards
+
+**No Abbreviations:**
+- Do NOT use abbreviations in class names, method names, or properties
+- Examples of what to avoid:
+  - ❌ `CookieMgr` → ✅ `CookieManager`
+  - ❌ `AppCtx` → ✅ `ApplicationContext`
+  - ❌ `ConfigSvc` → ✅ `ConfigurationService`
+  - ❌ `UserRpt` → ✅ `UserReport`
+  - ❌ `DbCtx` → ✅ `DbContext` (exception: EF Core convention)
+
+**Clarity over Brevity:**
+- Use full, descriptive names even if they're longer
+- The only acceptable abbreviations are well-established ones like:
+  - `Id` (Identifier)
+  - `Dto` (Data Transfer Object)
+  - `Api` (Application Programming Interface)
+  - `Ui` (User Interface)
+  - `Url` (Uniform Resource Locator)
+
+### C# Conventions
+
+**PascalCase:**
+- Classes, interfaces, methods, properties, enums
+- Examples: `ApplicationInsights`, `TelemetryClient`, `TrackEvent`
+
+**camelCase:**
+- Local variables, parameters, private fields (with `_` prefix for private fields)
+- Examples: `telemetryItem`, `_jsRuntime`, `connectionString`
+
+**File Organization:**
+- One public type per file
+- File name matches the type name exactly
+- Organize related types into folders (Interfaces/, Models/, Extensions/, etc.)
+
+### XML Documentation
+
+**Required for all public APIs:**
+```csharp
+/// <summary>
+/// Tracks a custom event to Application Insights.
+/// </summary>
+/// <param name="eventTelemetry">The event data to track.</param>
+/// <remarks>
+/// Use this method to track user actions, business events, or other custom metrics.
+/// Events appear in the Application Insights portal under Custom Events.
+/// </remarks>
+/// <example>
+/// <code>
+/// await appInsights.TrackEvent(new EventTelemetry
+/// {
+///     Name = "ButtonClicked",
+///     Properties = new Dictionary&lt;string, object?&gt;
+///     {
+///         { "buttonId", "submit" }
+///     }
+/// });
+/// </code>
+/// </example>
+public async Task TrackEvent(EventTelemetry eventTelemetry)
+```
+
+**Documentation Standards:**
+- `<summary>` - Brief description (1-2 sentences)
+- `<param>` - Describe each parameter
+- `<returns>` - Describe return value (if applicable)
+- `<remarks>` - Additional context, usage notes, warnings
+- `<example>` - Show realistic usage with `<code>` blocks
+- `<exception>` - Document thrown exceptions
+
+### Namespace Organization
+
+**Framework Packages:**
+- `Imagile.Framework.Core` - Zero-dependency foundational types
+- `Imagile.Framework.EntityFrameworkCore` - EF Core extensions and patterns
+- `Imagile.Framework.Blazor.ApplicationInsights` - Blazor WASM telemetry
+
+**Folder-to-Namespace Mapping:**
+- Each folder becomes part of the namespace
+- Example: `Models/Context/UserContext.cs` → `Imagile.Framework.Blazor.ApplicationInsights.Models.Context`
+
+## Git Workflow
+
+### Commit Message Format
+
+**Follow conventional commits with Co-Authored-By:**
+```
+<type>(<scope>): <description>
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+```
+
+**Types:**
+- `feat` - New feature
+- `fix` - Bug fix
+- `docs` - Documentation only
+- `refactor` - Code restructuring without functional change
+- `test` - Adding or updating tests
+- `chore` - Maintenance tasks, build changes
+
+**Examples:**
+```
+feat(blazor): add Application Insights telemetry support
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+```
+
+```
+fix(ef-core): correct audit timestamp timezone handling
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+```
+
+### Pre-Commit Checklist
+
+Before committing:
+1. Build solution: `dotnet build Imagile.Framework.sln`
+2. Ensure no compilation errors or warnings
+3. Review git diff to confirm only intended changes staged
+4. Verify commit message follows format
+
+## Build and Test Commands
+
+### Basic Operations
+
+```bash
+# Build entire solution
+dotnet build Imagile.Framework.sln
+
+# Build specific package
+dotnet build src/Imagile.Framework.Core
+
+# Run all tests
+dotnet test
+
+# Run specific test project
+dotnet test tests/Imagile.Framework.Core.Tests
+```
+
+### Package Operations
+
+```bash
+# Create NuGet packages (all projects marked IsPackable=true)
+dotnet pack Imagile.Framework.sln -c Release -o ./artifacts
+
+# Create package for specific project
+dotnet pack src/Imagile.Framework.Core -c Release -o ./artifacts
+```
+
+### Local Package Testing
+
+```bash
+# Add local package source (one-time setup)
+dotnet nuget add source C:\Code\imagile-framework\artifacts --name local-framework
+
+# Reference local package in consuming project
+dotnet add package Imagile.Framework.Core --version 0.0.1-alpha.1 --source local-framework
+```
 
 ## Project Structure
 
 ```
 imagile-framework/
 ├── src/
-│   └── Imagile.Framework.EntityFrameworkCore.Testing/  # Main library project
-│       ├── Configuration/                              # Fluent configuration classes
-│       │   ├── ConventionTestOptions.cs
-│       │   ├── ConventionTestOptionsBuilder.cs
-│       │   ├── ExclusionKey.cs
-│       │   └── RuleExclusionBuilder.cs
-│       ├── Infrastructure/                             # Base classes for testing
-│       │   └── InMemoryDatabaseTest.cs
-│       ├── Rules/                                      # Convention rule implementations
-│       │   ├── IConventionRule.cs
-│       │   ├── [Design Rules]
-│       │   └── [Naming Rules]
-│       ├── ConventionViolation.cs
-│       └── DbContextConventionTests.cs
-└── README.md
+│   ├── Imagile.Framework.Core/                           # Zero-dependency package
+│   ├── Imagile.Framework.EntityFrameworkCore/            # EF Core extensions
+│   └── Imagile.Framework.Blazor.ApplicationInsights/     # Blazor WASM telemetry
+├── tests/
+│   ├── Imagile.Framework.Core.Tests/
+│   ├── Imagile.Framework.EntityFrameworkCore.Tests/
+│   └── Imagile.Framework.Blazor.ApplicationInsights.Tests/
+├── .planning/                                             # GSD workflow artifacts
+├── Directory.Build.props                                  # Shared build properties
+├── Directory.Packages.props                               # Central Package Management
+└── Imagile.Framework.sln
 ```
 
-## Convention Rules
+## Architecture Principles
 
-### Design Rules
-- **PrimaryKeysMustBeIntsRule**: Primary keys must be int or long
-- **ProhibitGuidPrimaryKeysRule**: Primary keys cannot be Guid
-- **ProhibitNullableBooleansRule**: No nullable booleans (bool?)
-- **ProhibitNullableStringsRule**: String properties must be required
-- **StringsMustHaveMaxLengthRule**: All strings must have max length configured
+### Package Design
 
-### Naming Rules
-- **TableNamesMustBePluralRule**: Table names must be plural (Users, not User)
-- **TableNamesMustBePascalCaseRule**: Table names must be PascalCase
-- **PropertyNamesMustBePascalCaseRule**: Property names must be PascalCase
-- **ForeignKeysMustEndWithIdRule**: Foreign keys must end with "Id"
-- **PrimaryKeyMustBeEntityNameIdRule**: Primary key must be EntityNameId format
-- **DateTimesMustEndWithDateRule**: DateTime properties must end with "Date"
-- **BooleansMustStartWithPrefixRule**: Booleans must start with Is/Has/Are/Does
-- **GuidsMustEndWithUniqueRule**: Guid properties (non-keys) must end with "Unique"
-- **EnumsMustEndWithTypeRule**: Enum properties (non-keys) must end with "Type"
+**Core Package:**
+- Zero external dependencies
+- Contains only attributes, interfaces, and base classes
+- Designed for maximum reusability
 
-## Adding New Rules
+**Specialized Packages:**
+- Reference Core package
+- Reference external dependencies as needed (EF Core, Application Insights SDK, etc.)
+- Follow dependency chain: Core → EntityFrameworkCore/Blazor packages
 
-To add a new convention rule:
+**Target Framework:**
+- .NET 10 only (net10.0)
+- No multi-targeting for simplicity
+- Native AOT and trimming analysis enabled
 
-1. Create a new class in `src/Imagile.Framework.EntityFrameworkCore.Testing/Rules/`
-2. Implement the `IConventionRule` interface
-3. Add a test method in `DbContextConventionTests.cs`
-4. Update the README.md with the new rule documentation
+### Interface-First Design
 
-Example:
+**Prefer interfaces for extensibility:**
+```csharp
+// Good - allows mocking and alternative implementations
+public interface IAuditContextProvider<TUserKey, TTenantKey>
+{
+    TUserKey? UserId { get; }
+    TTenantKey? TenantId { get; }
+}
+
+// Implementation can vary by application
+public class HttpAuditContextProvider : IAuditContextProvider<int, int>
+{
+    // Uses HttpContext to get current user
+}
+```
+
+### Generic Type Parameters
+
+**Use generics for flexibility:**
+```csharp
+// Good - works with any key type (int, Guid, string)
+public interface IAuditableEntity<TUserKey> : ITimestampedEntity
+{
+    TUserKey? CreatedBy { get; set; }
+    TUserKey? ModifiedBy { get; set; }
+}
+
+// Consumers choose their key type
+public class Customer : IAuditableEntity<Guid>
+{
+    // Uses Guid for user keys
+}
+```
+
+## Testing Standards
+
+### Test Project Naming
+
+- Production: `Imagile.Framework.{PackageName}`
+- Tests: `Imagile.Framework.{PackageName}.Tests`
+- Example: `Imagile.Framework.Core.Tests`
+
+### Test Organization
 
 ```csharp
-namespace Imagile.Framework.EntityFrameworkCore.Testing.Rules;
-
-public class MyCustomRule : IConventionRule
+public class ApplicationInsightsTests
 {
-    public string Name => "My custom rule description";
-
-    public IEnumerable<ConventionViolation> Validate(
-        IEnumerable<DbContext> contexts,
-        ConventionTestOptions options)
+    [Fact]
+    public async Task TrackEvent_CallsCorrectJSMethod()
     {
-        var violations = new List<ConventionViolation>();
+        // Arrange
+        var mockJs = new MockJSRuntime();
+        var appInsights = new ApplicationInsights();
+        appInsights.InitJSRuntime(mockJs);
 
-        foreach (var context in contexts)
-        {
-            var contextName = context.GetType().Name;
+        // Act
+        await appInsights.TrackEvent(new EventTelemetry { Name = "TestEvent" });
 
-            foreach (var entityType in context.Model.GetEntityTypes())
-            {
-                var entityName = entityType.ClrType.Name;
-
-                // Check if entity is excluded
-                if (options.IsExcluded<MyCustomRule>(entityName))
-                {
-                    continue;
-                }
-
-                // Your validation logic here
-                // Add violations as needed:
-                // violations.Add(new ConventionViolation(contextName, entityName, propertyName));
-            }
-        }
-
-        return violations;
+        // Assert
+        mockJs.Invocations.Should().ContainSingle()
+            .Which.Identifier.Should().Be("appInsights.trackEvent");
     }
 }
 ```
 
-## Building and Publishing
+**Test Conventions:**
+- Use xUnit for test framework
+- Use FluentAssertions for assertions
+- Method naming: `MethodName_Scenario_ExpectedBehavior`
+- Arrange-Act-Assert pattern
+- One logical assertion per test
 
-### Building Locally
+## Quick Reference
 
-```bash
-cd src/Imagile.Framework.EntityFrameworkCore.Testing
-dotnet build -c Release
-```
-
-Or build the entire solution:
-
-```bash
-dotnet build Imagile.Framework.sln -c Release
-```
-
-### Creating NuGet Package
+### Common Commands
 
 ```bash
-dotnet pack src/Imagile.Framework.EntityFrameworkCore.Testing -c Release
+# Development cycle
+dotnet build && dotnet test
+
+# Create packages
+dotnet pack -c Release
+
+# Clean build artifacts
+dotnet clean
+rm -r artifacts/
+
+# Restore packages
+dotnet restore
 ```
 
-### Publishing to NuGet
+### Version Management
 
-The project includes a GitHub Actions workflow that automatically publishes to NuGet when a version tag is pushed:
+**GitVersion Configuration:**
+- Strategy: MainLine (ContinuousDeployment)
+- Format: `{Major}.{Minor}.{Patch}-{PreReleaseLabel}.{CommitsSinceTag}`
+- Example: `0.1.0-alpha.5`
 
-```bash
-git tag v1.0.0
-git push origin v1.0.0
+**Versioning:**
+- All packages share same version from GitVersion
+- Tag releases: `git tag v1.0.0` to create official release
+- Development builds: `0.x.y-alpha.z`
+
+### Package References
+
+**In consuming projects:**
+```xml
+<ItemGroup>
+  <PackageReference Include="Imagile.Framework.Core" Version="0.1.0-alpha.5" />
+  <PackageReference Include="Imagile.Framework.EntityFrameworkCore" Version="0.1.0-alpha.5" />
+</ItemGroup>
 ```
 
-Alternatively, use the manual workflow dispatch in GitHub Actions.
+## Quality Standards
 
-## Dependencies
+### Code Analysis
 
-- **.NET 10**: Latest .NET version
-- **Microsoft.EntityFrameworkCore 10.0.0**: EF Core framework
-- **Microsoft.EntityFrameworkCore.Sqlite 10.0.0**: SQLite provider for testing
-- **xunit 2.9.3**: Testing framework
-- **FluentAssertions 6.12.0**: Fluent assertion library
-- **Humanizer.Core 3.0.1**: String manipulation (pluralization, PascalCase, etc.)
+- Enable nullable reference types
+- Treat warnings as errors in Release builds
+- Enable AOT and trimming compatibility analysis
+- No compiler warnings allowed
 
-## Code Style and Conventions
+### Documentation
 
-- Use C# 10+ features (file-scoped namespaces, required properties, etc.)
-- Nullable reference types enabled
-- Follow PascalCase for class/property names
-- Use clear, descriptive names for rules and methods
-- Include XML documentation comments for public APIs
-- Keep rules focused on a single concern
-- Use fluent configuration patterns
+- All public APIs require XML documentation
+- Include usage examples in documentation
+- Document edge cases and limitations
+- Reference related types and methods
 
-## Common Tasks
+### Performance
 
-### Excluding Entities from Rules
+- Avoid allocations in hot paths
+- Use `ValueTask<T>` for frequently-called async methods
+- Consider `Span<T>` and `Memory<T>` for array operations
+- Profile before optimizing
 
-Use the `Configure` method in your test class:
+## NuGet Publishing
 
-```csharp
-protected override void Configure(ConventionTestOptionsBuilder builder)
-{
-    builder
-        .ForRule<StringsMustHaveMaxLengthRule>(rule => rule
-            .ExcludeEntity<AuditLog>())
-        .ExcludeEntityFromAllRules("__EFMigrationsHistory");
-}
-```
+**Package Metadata (defined in Directory.Build.props):**
+- Authors: "Imagile"
+- Company: "Imagile"
+- Copyright: "© Imagile. All rights reserved."
+- License: MIT
+- Repository: https://github.com/imagile/imagile-framework
+- Icon: Package icon embedded
+- README: Per-package README.md included
 
-## Troubleshooting
+**GitHub Actions Workflow:**
+- Triggered by version tags: `v*.*.*`
+- Builds, tests, packs, and publishes to NuGet.org
+- Includes symbol packages (.snupkg) for debugging
 
-### Test Failures
+## Migration Guidelines
 
-1. Check the violation message for specific entities/properties
-2. Either fix the entity to comply with the rule, or add an exclusion
-3. Review the rule implementation if behavior seems incorrect
+When migrating code into framework packages:
 
-### NuGet Package Not Building
+1. **Update namespaces** from source to framework conventions
+2. **Expand abbreviations** (CookieMgr → CookieManager)
+3. **Enhance XML documentation** beyond original source
+4. **Remove source-specific dependencies** if not applicable
+5. **Preserve JsonPropertyName attributes** for serialization compatibility
+6. **Update file organization** to match framework structure
 
-1. Ensure .NET 10 SDK is installed
-2. Check that all dependencies are restored: `dotnet restore`
-3. Review build output for specific errors
+## Resources
 
-## Future Enhancements
-
-Potential additions to the library:
-- Index naming conventions
-- Navigation property naming rules
-- Column type validation rules
-- Constraint naming conventions
-- Schema validation rules
+- **GSD Workflow:** `.planning/` directory contains all planning artifacts
+- **Build Configuration:** `Directory.Build.props` for shared MSBuild properties
+- **Package Management:** `Directory.Packages.props` for centralized versions
+- **Architecture Decisions:** Documented in `.planning/STATE.md`
