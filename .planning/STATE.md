@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2026-01-25)
 ## Current Position
 
 Phase: 3 of 5 (EF Core Package)
-Plan: 4 of 5 in current phase
-Status: In progress
-Last activity: 2026-01-25 — Completed 03-04-PLAN.md
+Plan: 5 of 5 in current phase
+Status: Phase complete
+Last activity: 2026-01-25 — Completed 03-05-PLAN.md
 
-Progress: [██████░░░░] 63%
+Progress: [███████░░░] 69%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: 2.8 min
+- Total plans completed: 11
+- Average duration: 2.7 min
 - Total execution time: 0.5 hours
 
 **By Phase:**
@@ -29,11 +29,11 @@ Progress: [██████░░░░] 63%
 |-------|-------|-------|----------|
 | 01-foundation-infrastructure | 2 | 9min | 4.5min |
 | 02-core-package | 4 | 10min | 2.5min |
-| 03-ef-core-package | 4 | 10min | 2.5min |
+| 03-ef-core-package | 5 | 13min | 2.6min |
 
 **Recent Trend:**
-- Last 5 plans: 02-04 (1min), 03-01 (3min), 03-02 (2min), 03-03 (2min), 03-04 (3min)
-- Trend: Stable - consistent execution times, slight increase for complex implementation (DbContext)
+- Last 5 plans: 03-01 (3min), 03-02 (2min), 03-03 (2min), 03-04 (3min), 03-05 (3min)
+- Trend: Stable - consistent 2-3 minute execution times across phase 3
 
 *Updated after each plan completion*
 
@@ -81,6 +81,10 @@ Recent decisions affecting current work:
 - Two-phase save pattern: capture changes BEFORE base.SaveChanges, persist AFTER - 03-04
 - Reflection-based interface checking for generic type parameter matching - 03-04
 - ISO 8601 formatting for DateTimeOffset/DateTime in audit logs - 03-04
+- Extension methods provide fluent API for soft delete operations - 03-05
+- Query extensions use DbContext constraint to work with any derived context - 03-05
+- Configuration helpers called from derived DbContext OnModelCreating for opt-in filtering - 03-05
+- Tenant filter requires expression parameter - wiring is opt-in per application needs - 03-05
 
 ### Pending Todos
 
@@ -92,10 +96,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-25 22:15 UTC
-Stopped at: Completed 03-04-PLAN.md
+Last session: 2026-01-25 22:21 UTC
+Stopped at: Completed 03-05-PLAN.md (Phase 3 complete)
 Resume file: None
-Next: Execute 03-05-PLAN.md (Wave 4)
+Next: Phase 4 or 5 (see ROADMAP.md)
 
 ---
 *State initialized: 2026-01-25*
