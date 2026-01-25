@@ -30,10 +30,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. GitVersion generates semantic versions automatically from Git history
   4. XML documentation files generate for all projects without warnings
   5. Native AOT and trimming analysis enabled for all framework packages
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] (To be created during phase planning)
+- [ ] 01-01-PLAN.md - Build infrastructure setup (Directory.Build.props, Directory.Packages.props, GitVersion)
+- [ ] 01-02-PLAN.md - Project restructure (rename solution, move project, update namespaces)
 
 ### Phase 2: Core Package
 **Goal**: Create zero-dependency Core package with declarative attributes extracted from imagile-app.
@@ -104,7 +105,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Infrastructure | 0/? | Not started | - |
+| 1. Foundation & Infrastructure | 0/2 | Planned | - |
 | 2. Core Package | 0/? | Not started | - |
 | 3. EF Core Package | 0/? | Not started | - |
 | 4. Blazor Package | 0/? | Not started | - |
