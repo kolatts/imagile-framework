@@ -1,0 +1,27 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Entity Framework Core -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Data.Sqlite" Version="10.0.0" />
+
+    <!-- Testing -->
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="FluentAssertions" Version="6.12.0" />
+
+    <!-- Utilities -->
+    <PackageVersion Include="Humanizer.Core" Version="3.0.1" />
+
+    <!-- Future packages (placeholders) -->
+    <!-- <PackageVersion Include="Microsoft.ApplicationInsights" Version="" /> -->
+    <!-- <PackageVersion Include="Microsoft.JSInterop" Version="" /> -->
+  </ItemGroup>
+
+</Project>
