@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2026-01-25)
 ## Current Position
 
 Phase: 3 of 5 (EF Core Package)
-Plan: 1 of 5 in current phase
+Plan: 2 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-25 — Completed 03-01-PLAN.md
+Last activity: 2026-01-25 — Completed 03-02-PLAN.md
 
-Progress: [████░░░░░░] 43%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 3.1 min
+- Total plans completed: 8
+- Average duration: 2.9 min
 - Total execution time: 0.4 hours
 
 **By Phase:**
@@ -29,10 +29,10 @@ Progress: [████░░░░░░] 43%
 |-------|-------|-------|----------|
 | 01-foundation-infrastructure | 2 | 9min | 4.5min |
 | 02-core-package | 4 | 10min | 2.5min |
-| 03-ef-core-package | 1 | 3min | 3.0min |
+| 03-ef-core-package | 2 | 5min | 2.5min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (5min), 02-02 (2min), 02-03 (2min), 02-04 (1min), 03-01 (3min)
+- Last 5 plans: 02-02 (2min), 02-03 (2min), 02-04 (1min), 03-01 (3min), 03-02 (2min)
 - Trend: Stable - consistent execution times for interface/attribute creation
 
 *Updated after each plan completion*
@@ -67,6 +67,10 @@ Recent decisions affecting current work:
 - Generic TUserKey/TTenantKey parameters for flexible identifier types - 03-01
 - ITenantEntity independent of audit hierarchy for composability - 03-01
 - DateTimeOffset for proper timezone handling in distributed systems - 03-01
+- HideValueChanges parameter on [Auditable] for sensitive data tracking without exposing values - 03-02
+- [IgnoreAudit] marker attribute with optional Reason for explicit exclusion documentation - 03-02
+- Both attributes sealed with Inherited=true for consistency and subclass support - 03-02
+- Two-level opt-in: entity implements IEntityChangeAuditable + properties have [Auditable] - 03-02
 
 ### Pending Todos
 
@@ -78,10 +82,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-25 14:59 UTC
-Stopped at: Completed 03-01-PLAN.md
+Last session: 2026-01-25 22:04 UTC
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
-Next: Execute 03-02-PLAN.md (Wave 2)
+Next: Execute 03-03-PLAN.md (Wave 3)
 
 ---
 *State initialized: 2026-01-25*
