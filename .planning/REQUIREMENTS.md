@@ -120,13 +120,62 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (To be filled by roadmapper) | | |
+| INFRA-01 | Phase 1 | Pending |
+| INFRA-02 | Phase 1 | Pending |
+| INFRA-03 | Phase 1 | Pending |
+| INFRA-04 | Phase 5 | Pending |
+| INFRA-05 | Phase 5 | Pending |
+| INFRA-06 | Phase 1 | Pending |
+| INFRA-07 | Phase 1 | Pending |
+| CORE-01 | Phase 2 | Pending |
+| CORE-02 | Phase 2 | Pending |
+| CORE-03 | Phase 2 | Pending |
+| CORE-04 | Phase 2 | Pending |
+| CORE-05 | Phase 2 | Pending |
+| CORE-06 | Phase 2 | Pending |
+| CORE-07 | Phase 2 | Pending |
+| CORE-08 | Phase 2 | Pending |
+| CORE-09 | Phase 2 | Pending |
+| CORE-10 | Phase 2 | Pending |
+| EF-01 | Phase 3 | Pending |
+| EF-02 | Phase 3 | Pending |
+| EF-03 | Phase 3 | Pending |
+| EF-04 | Phase 3 | Pending |
+| EF-05 | Phase 3 | Pending |
+| EF-06 | Phase 3 | Pending |
+| EF-07 | Phase 3 | Pending |
+| EF-08 | Phase 3 | Pending |
+| EF-09 | Phase 3 | Pending |
+| EF-10 | Phase 3 | Pending |
+| EF-11 | Phase 3 | Pending |
+| BLAZOR-01 | Phase 4 | Pending |
+| BLAZOR-02 | Phase 4 | Pending |
+| BLAZOR-03 | Phase 4 | Pending |
+| BLAZOR-04 | Phase 4 | Pending |
+| BLAZOR-05 | Phase 4 | Pending |
+| BLAZOR-06 | Phase 4 | Pending |
+| BLAZOR-07 | Phase 4 | Pending |
+| BLAZOR-08 | Phase 4 | Pending |
+| BLAZOR-09 | Phase 4 | Pending |
+| BLAZOR-10 | Phase 4 | Pending |
+| BLAZOR-11 | Phase 4 | Pending |
+| RENAME-01 | Phase 1 | Pending |
+| RENAME-02 | Phase 1 | Pending |
+| RENAME-03 | Phase 1 | Pending |
+| RENAME-04 | Phase 1 | Pending |
 
 **Coverage:**
-- v1 requirements: TBD
-- Mapped to phases: TBD
-- Unmapped: TBD
+- v1 requirements: 43 total
+- Mapped to phases: 43/43 (100%)
+- Unmapped: 0
+
+**Phase Distribution:**
+- Phase 1 (Foundation & Infrastructure): 9 requirements
+- Phase 2 (Core Package): 10 requirements
+- Phase 3 (EF Core Package): 11 requirements
+- Phase 4 (Blazor Package): 11 requirements
+- Phase 5 (Publishing & Documentation): 2 requirements
 
 ---
 *Requirements defined: 2026-01-25*
-*Last updated: 2026-01-25 after initial definition*
+*Last updated: 2026-01-25 after roadmap traceability mapping*
