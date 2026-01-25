@@ -19,9 +19,9 @@
     <!-- Utilities -->
     <PackageVersion Include="Humanizer.Core" Version="3.0.1" />
 
-    <!-- Future packages (placeholders) -->
-    <!-- <PackageVersion Include="Microsoft.ApplicationInsights" Version="" /> -->
-    <!-- <PackageVersion Include="Microsoft.JSInterop" Version="" /> -->
+    <!-- Blazor and Application Insights -->
+    <PackageVersion Include="Microsoft.ApplicationInsights" Version="2.22.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0" />
   </ItemGroup>
 
 </Project>
