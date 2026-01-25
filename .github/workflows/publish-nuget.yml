@@ -1,0 +1,73 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 1.0.0)'
+        required: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Required for GitVersion
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v1
+      with:
+        versionSpec: '5.x'
+
+    - name: Determine Version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v1
+      with:
+        useConfigFile: true
+        configFilePath: GitVersion.yml
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          9.0.x
+          10.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore Imagile.EntityFrameworkCore.Tests/Imagile.EntityFrameworkCore.Tests.csproj
+
+    - name: Build
+      run: dotnet build Imagile.EntityFrameworkCore.Tests/Imagile.EntityFrameworkCore.Tests.csproj --configuration Release --no-restore
+
+    - name: Pack
+      run: |
+        if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ -n "${{ github.event.inputs.version }}" ]; then
+          VERSION="${{ github.event.inputs.version }}"
+        else
+          VERSION="${{ steps.gitversion.outputs.nuGetVersionV2 }}"
+        fi
+        echo "Packing version: $VERSION"
+        dotnet pack Imagile.EntityFrameworkCore.Tests/Imagile.EntityFrameworkCore.Tests.csproj \
+          --configuration Release \
+          --no-build \
+          --output ./artifacts \
+          /p:PackageVersion=$VERSION \
+          /p:Version=$VERSION \
+          /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
+          /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} \
+          /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
+
+    - name: Push to NuGet
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-package-${{ steps.gitversion.outputs.nuGetVersionV2 }}
+        path: ./artifacts/*.nupkg
