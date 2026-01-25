@@ -120,13 +120,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | Phase 1 | Pending |
-| INFRA-02 | Phase 1 | Pending |
-| INFRA-03 | Phase 1 | Pending |
+| INFRA-01 | Phase 1 | Complete |
+| INFRA-02 | Phase 1 | Complete |
+| INFRA-03 | Phase 1 | Complete |
 | INFRA-04 | Phase 5 | Pending |
 | INFRA-05 | Phase 5 | Pending |
-| INFRA-06 | Phase 1 | Pending |
-| INFRA-07 | Phase 1 | Pending |
+| INFRA-06 | Phase 1 | Complete |
+| INFRA-07 | Phase 1 | Complete |
 | CORE-01 | Phase 2 | Pending |
 | CORE-02 | Phase 2 | Pending |
 | CORE-03 | Phase 2 | Pending |
@@ -159,10 +159,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BLAZOR-09 | Phase 4 | Pending |
 | BLAZOR-10 | Phase 4 | Pending |
 | BLAZOR-11 | Phase 4 | Pending |
-| RENAME-01 | Phase 1 | Pending |
-| RENAME-02 | Phase 1 | Pending |
-| RENAME-03 | Phase 1 | Pending |
-| RENAME-04 | Phase 1 | Pending |
+| RENAME-01 | Phase 1 | Complete |
+| RENAME-02 | Phase 1 | Complete |
+| RENAME-03 | Phase 1 | Complete |
+| RENAME-04 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 43 total
