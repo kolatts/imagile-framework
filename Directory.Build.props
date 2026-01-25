@@ -1,0 +1,37 @@
+<Project>
+
+  <PropertyGroup>
+    <!-- Package Metadata (shared across all packages) -->
+    <Authors>Imagile</Authors>
+    <Company>Imagile</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/imagile/imagile-framework</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/imagile/imagile-framework</PackageProjectUrl>
+
+    <!-- Build Settings -->
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+
+    <!-- Documentation -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+
+    <!-- AOT/Trimming Analysis -->
+    <IsTrimmable>true</IsTrimmable>
+    <IsAotCompatible>true</IsAotCompatible>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+  </PropertyGroup>
+
+  <!-- Conditional IsPackable for non-test projects -->
+  <PropertyGroup Condition="!$(MSBuildProjectName.Contains('Tests')) AND !$(MSBuildProjectName.Contains('Test')) AND !$(MSBuildProjectName.Contains('.Sample'))">
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(MSBuildProjectName.Contains('Tests')) OR $(MSBuildProjectName.Contains('Test')) OR $(MSBuildProjectName.Contains('.Sample'))">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+</Project>
