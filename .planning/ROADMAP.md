@@ -17,6 +17,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: EF Core Package** - Audit logging system with change tracking
 - [ ] **Phase 4: Blazor Package** - Application Insights telemetry integration
 - [ ] **Phase 5: Publishing & Documentation** - NuGet metadata and release automation
+- [ ] **Phase 6: Configuration Abstractions** - Configuration patterns from imagile-app
+- [ ] **Phase 7: Azure Storage Abstractions** - Azure Storage queue/blob/table abstractions
 
 ## Phase Details
 
@@ -106,10 +108,32 @@ Plans:
 Plans:
 - [ ] (To be created during phase planning)
 
+### Phase 6: Configuration Abstractions
+**Goal**: Consider Configuration abstractions that can be made to pull into the framework ideas from the imagile-app repo.
+**Depends on**: Phase 5
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 6 to break down)
+
+**Details:**
+[To be added during planning]
+
+### Phase 7: Azure Storage Abstractions
+**Goal**: Phase for Abstracting Azure Storage and queue / blob / table entities.
+**Depends on**: Phase 6
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 7 to break down)
+
+**Details:**
+[To be added during planning]
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 **Note:** Phase 3 and Phase 4 can execute in parallel after Phase 2 completes (no dependency between them).
 
@@ -120,7 +144,9 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 3. EF Core Package | 5/5 | ✓ Complete | 2026-01-25 |
 | 4. Blazor Package | 0/4 | Planned | - |
 | 5. Publishing & Documentation | 0/? | Not started | - |
+| 6. Configuration Abstractions | 0/? | Not started | - |
+| 7. Azure Storage Abstractions | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-01-25*
-*Last updated: 2026-01-25 after Phase 4 planning*
+*Last updated: 2026-01-25 after Phase 6 and 7 additions*

@@ -94,6 +94,11 @@ None yet.
 
 None yet.
 
+### Roadmap Evolution
+
+- Phase 6 added: Consider Configuration abstractions that can be made to pull into the framework ideas from the imagile-app repo
+- Phase 7 added: Phase for Abstracting Azure Storage and queue / blob / table entities
+
 ## Session Continuity
 
 Last session: 2026-01-25 22:21 UTC
