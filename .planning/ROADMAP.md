@@ -13,7 +13,7 @@ Transform a single-package testing library into a multi-package .NET framework b
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Infrastructure** - Project structure, renaming, and build configuration
-- [ ] **Phase 2: Core Package** - Zero-dependency attribute and pattern library
+- [x] **Phase 2: Core Package** - Zero-dependency attribute and pattern library
 - [x] **Phase 3: EF Core Package** - Audit logging system with change tracking
 - [ ] **Phase 4: Blazor Package** - Application Insights telemetry integration
 - [ ] **Phase 5: Publishing & Documentation** - NuGet metadata and release automation
@@ -49,10 +49,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md - Core project infrastructure (project file, solution integration)
-- [ ] 02-02-PLAN.md - Association attributes (AssociatedAttribute, RequiresAttribute, IncludesAttribute)
-- [ ] 02-03-PLAN.md - Metadata attributes (CategoryAttribute, CountAttribute, NativeNameAttribute, HostedAttribute)
-- [ ] 02-04-PLAN.md - Validation marker attribute (DoNotUpdateAttribute) and final verification
+- [x] 02-01-PLAN.md - Core project infrastructure (project file, solution integration)
+- [x] 02-02-PLAN.md - Association attributes (AssociatedAttribute, RequiresAttribute, IncludesAttribute)
+- [x] 02-03-PLAN.md - Metadata attributes (CategoryAttribute, CountAttribute, NativeNameAttribute, HostedAttribute)
+- [x] 02-04-PLAN.md - Validation marker attribute (DoNotUpdateAttribute) and final verification
 
 ### Phase 3: EF Core Package
 **Goal**: Implement audit logging system inspired by Arcoro.One with automatic timestamps, user tracking, and change tracking.
@@ -67,11 +67,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 03-01-PLAN.md - Audit interfaces (IAuditContextProvider, ITimestampedEntity, IAuditableEntity, IEntityChangeAuditable, ITenantEntity)
-- [ ] 03-02-PLAN.md - Audit attributes ([Auditable], [IgnoreAudit])
-- [ ] 03-03-PLAN.md - Change tracking entities (EntityChange, EntityChangeProperty, EntityChangeOperation)
-- [ ] 03-04-PLAN.md - ImagileDbContext base class with SaveChanges override
-- [ ] 03-05-PLAN.md - Extensions and configuration (SoftDeleteExtensions, AuditQueryExtensions, AuditConfiguration)
+- [x] 03-01-PLAN.md - Audit interfaces (IAuditContextProvider, ITimestampedEntity, IAuditableEntity, IEntityChangeAuditable, ITenantEntity)
+- [x] 03-02-PLAN.md - Audit attributes ([Auditable], [IgnoreAudit])
+- [x] 03-03-PLAN.md - Change tracking entities (EntityChange, EntityChangeProperty, EntityChangeOperation)
+- [x] 03-04-PLAN.md - ImagileDbContext base class with SaveChanges override
+- [x] 03-05-PLAN.md - Extensions and configuration (SoftDeleteExtensions, AuditQueryExtensions, AuditConfiguration)
 
 ### Phase 4: Blazor Package
 **Goal**: Migrate BlazorApplicationInsights into framework as standalone package with automatic page tracking and custom event support.
@@ -83,10 +83,13 @@ Plans:
   3. TelemetryClient accessible via DI for custom tracking throughout Blazor app
   4. Unhandled Blazor exceptions automatically tracked to Application Insights
   5. Custom telemetry initializer support with factory pattern enables context injection (e.g., tenant ID)
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] (To be created during phase planning)
+- [ ] 04-01-PLAN.md - Core interfaces and telemetry models migration
+- [ ] 04-02-PLAN.md - ApplicationInsights implementation, DI registration, and initialization component
+- [ ] 04-03-PLAN.md - ILoggerProvider integration for automatic log shipping
+- [ ] 04-04-PLAN.md - Unit tests and final verification
 
 ### Phase 5: Publishing & Documentation
 **Goal**: Complete NuGet package metadata, publish all packages to NuGet.org, and create comprehensive documentation.
@@ -115,9 +118,9 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation & Infrastructure | 2/2 | ✓ Complete | 2026-01-25 |
 | 2. Core Package | 4/4 | ✓ Complete | 2026-01-25 |
 | 3. EF Core Package | 5/5 | ✓ Complete | 2026-01-25 |
-| 4. Blazor Package | 0/? | Not started | - |
+| 4. Blazor Package | 0/4 | Planned | - |
 | 5. Publishing & Documentation | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-01-25*
-*Last updated: 2026-01-25 after Phase 2 execution*
+*Last updated: 2026-01-25 after Phase 4 planning*
