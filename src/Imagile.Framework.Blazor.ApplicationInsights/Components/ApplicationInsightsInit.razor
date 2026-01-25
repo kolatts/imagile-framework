@@ -1,0 +1,7 @@
+@namespace Imagile.Framework.Blazor.ApplicationInsights.Components
+
+@((MarkupString)script)
+@if (!IsWasmStandalone)
+{
+    <script src="_content/Imagile.Framework.Blazor.ApplicationInsights/BlazorApplicationInsights.lib.module.js"></script>
+}
