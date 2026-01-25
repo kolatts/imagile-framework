@@ -46,10 +46,13 @@ Plans:
   3. All public APIs documented with XML comments that appear in IntelliSense
   4. Validation attribute base classes available for custom validation patterns
   5. Package compiles without warnings when Native AOT analysis is enabled
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] (To be created during phase planning)
+- [ ] 02-01-PLAN.md - Core project infrastructure (project file, solution integration)
+- [ ] 02-02-PLAN.md - Association attributes (AssociatedAttribute, RequiresAttribute, IncludesAttribute)
+- [ ] 02-03-PLAN.md - Metadata attributes (CategoryAttribute, CountAttribute, NativeNameAttribute, HostedAttribute)
+- [ ] 02-04-PLAN.md - Validation marker attribute (DoNotUpdateAttribute) and final verification
 
 ### Phase 3: EF Core Package
 **Goal**: Implement audit logging system inspired by Arcoro.One with automatic timestamps, user tracking, and change tracking.
@@ -106,11 +109,11 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Infrastructure | 2/2 | ✓ Complete | 2026-01-25 |
-| 2. Core Package | 0/? | Not started | - |
+| 2. Core Package | 0/4 | Planned | - |
 | 3. EF Core Package | 0/? | Not started | - |
 | 4. Blazor Package | 0/? | Not started | - |
 | 5. Publishing & Documentation | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-01-25*
-*Last updated: 2026-01-25 after Phase 1 completion*
+*Last updated: 2026-01-25 after Phase 2 planning*
