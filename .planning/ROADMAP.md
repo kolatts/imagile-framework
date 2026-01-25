@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Infrastructure** - Project structure, renaming, and build configuration
 - [ ] **Phase 2: Core Package** - Zero-dependency attribute and pattern library
-- [ ] **Phase 3: EF Core Package** - Audit logging system with change tracking
+- [x] **Phase 3: EF Core Package** - Audit logging system with change tracking
 - [ ] **Phase 4: Blazor Package** - Application Insights telemetry integration
 - [ ] **Phase 5: Publishing & Documentation** - NuGet metadata and release automation
 
@@ -59,15 +59,19 @@ Plans:
 **Depends on**: Phase 2
 **Requirements**: EF-01, EF-02, EF-03, EF-04, EF-05, EF-06, EF-07, EF-08, EF-09, EF-10, EF-11
 **Success Criteria** (what must be TRUE):
-  1. Developer can mark entity with [Auditable] attribute and automatically get CreatedDate, ModifiedDate, CreatedBy, ModifiedBy tracking
-  2. SaveChangesInterceptor captures property-level changes (old value, new value) for auditable entities
+  1. Developer can implement ITimestampedEntity/IAuditableEntity interfaces and automatically get CreatedOn, ModifiedOn, CreatedBy, ModifiedBy tracking
+  2. SaveChanges override captures property-level changes (old value, new value) for IEntityChangeAuditable entities
   3. Soft delete support works with IsDeleted flag and global query filters automatically exclude soft-deleted entities
-  4. Audit metadata stored as shadow properties without polluting domain models
-  5. IAuditContextProvider interface allows testability by injecting user context
-**Plans**: TBD
+  4. Audit fields are explicit interface properties for testability (not shadow properties)
+  5. IAuditContextProvider interface in Core package allows testability by injecting user/tenant context
+**Plans**: 5 plans
 
 Plans:
-- [ ] (To be created during phase planning)
+- [ ] 03-01-PLAN.md - Audit interfaces (IAuditContextProvider, ITimestampedEntity, IAuditableEntity, IEntityChangeAuditable, ITenantEntity)
+- [ ] 03-02-PLAN.md - Audit attributes ([Auditable], [IgnoreAudit])
+- [ ] 03-03-PLAN.md - Change tracking entities (EntityChange, EntityChangeProperty, EntityChangeOperation)
+- [ ] 03-04-PLAN.md - ImagileDbContext base class with SaveChanges override
+- [ ] 03-05-PLAN.md - Extensions and configuration (SoftDeleteExtensions, AuditQueryExtensions, AuditConfiguration)
 
 ### Phase 4: Blazor Package
 **Goal**: Migrate BlazorApplicationInsights into framework as standalone package with automatic page tracking and custom event support.
@@ -110,7 +114,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation & Infrastructure | 2/2 | ✓ Complete | 2026-01-25 |
 | 2. Core Package | 4/4 | ✓ Complete | 2026-01-25 |
-| 3. EF Core Package | 0/? | Not started | - |
+| 3. EF Core Package | 5/5 | ✓ Complete | 2026-01-25 |
 | 4. Blazor Package | 0/? | Not started | - |
 | 5. Publishing & Documentation | 0/? | Not started | - |
 
