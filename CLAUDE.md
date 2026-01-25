@@ -1,28 +1,26 @@
-# Imagile.EntityFrameworkCore.Tests - Claude Code Guide
+# Imagile.Framework.EntityFrameworkCore.Testing - Claude Code Guide
 
-This document provides guidance for working with the Imagile.EntityFrameworkCore.Tests library using Claude Code.
+This document provides guidance for working with the Imagile.Framework.EntityFrameworkCore.Testing library using Claude Code.
 
 ## Project Structure
 
 ```
-imagile-entityframeworkcore/
-├── Imagile.EntityFrameworkCore.Tests/  # Main library project
-│   ├── Configuration/                  # Fluent configuration classes
-│   │   ├── ConventionTestOptions.cs
-│   │   ├── ConventionTestOptionsBuilder.cs
-│   │   ├── ExclusionKey.cs
-│   │   └── RuleExclusionBuilder.cs
-│   ├── Infrastructure/                 # Base classes for testing
-│   │   └── InMemoryDatabaseTest.cs
-│   ├── Rules/                          # Convention rule implementations
-│   │   ├── IConventionRule.cs
-│   │   ├── [Design Rules]
-│   │   └── [Naming Rules]
-│   ├── ConventionViolation.cs
-│   └── DbContextConventionTests.cs
-├── Samples/                            # Example projects
-│   ├── SampleApp.Data/                 # Sample EF Core project
-│   └── SampleApp.Tests/                # Sample test project
+imagile-framework/
+├── src/
+│   └── Imagile.Framework.EntityFrameworkCore.Testing/  # Main library project
+│       ├── Configuration/                              # Fluent configuration classes
+│       │   ├── ConventionTestOptions.cs
+│       │   ├── ConventionTestOptionsBuilder.cs
+│       │   ├── ExclusionKey.cs
+│       │   └── RuleExclusionBuilder.cs
+│       ├── Infrastructure/                             # Base classes for testing
+│       │   └── InMemoryDatabaseTest.cs
+│       ├── Rules/                                      # Convention rule implementations
+│       │   ├── IConventionRule.cs
+│       │   ├── [Design Rules]
+│       │   └── [Naming Rules]
+│       ├── ConventionViolation.cs
+│       └── DbContextConventionTests.cs
 └── README.md
 ```
 
@@ -50,7 +48,7 @@ imagile-entityframeworkcore/
 
 To add a new convention rule:
 
-1. Create a new class in `Imagile.EntityFrameworkCore.Tests/Rules/`
+1. Create a new class in `src/Imagile.Framework.EntityFrameworkCore.Testing/Rules/`
 2. Implement the `IConventionRule` interface
 3. Add a test method in `DbContextConventionTests.cs`
 4. Update the README.md with the new rule documentation
@@ -58,6 +56,8 @@ To add a new convention rule:
 Example:
 
 ```csharp
+namespace Imagile.Framework.EntityFrameworkCore.Testing.Rules;
+
 public class MyCustomRule : IConventionRule
 {
     public string Name => "My custom rule description";
@@ -93,28 +93,25 @@ public class MyCustomRule : IConventionRule
 }
 ```
 
-## Testing the Library
-
-Run tests in the sample project:
-
-```bash
-cd Samples/SampleApp.Tests
-dotnet test
-```
-
 ## Building and Publishing
 
 ### Building Locally
 
 ```bash
-cd Imagile.EntityFrameworkCore.Tests
+cd src/Imagile.Framework.EntityFrameworkCore.Testing
 dotnet build -c Release
+```
+
+Or build the entire solution:
+
+```bash
+dotnet build Imagile.Framework.sln -c Release
 ```
 
 ### Creating NuGet Package
 
 ```bash
-dotnet pack -c Release
+dotnet pack src/Imagile.Framework.EntityFrameworkCore.Testing -c Release
 ```
 
 ### Publishing to NuGet
@@ -148,13 +145,6 @@ Alternatively, use the manual workflow dispatch in GitHub Actions.
 - Use fluent configuration patterns
 
 ## Common Tasks
-
-### Adding a New Entity to Sample Project
-
-1. Create entity class in `Samples/SampleApp.Data/Entities/`
-2. Add DbSet property to `SampleDbContext`
-3. Configure entity in `OnModelCreating`
-4. Run tests to ensure conventions are met
 
 ### Excluding Entities from Rules
 

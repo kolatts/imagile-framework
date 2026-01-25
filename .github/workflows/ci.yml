@@ -23,10 +23,7 @@ jobs:
           10.0.x
 
     - name: Restore dependencies
-      run: dotnet restore Imagile.EntityFrameworkCore.sln
+      run: dotnet restore Imagile.Framework.sln
 
     - name: Build all projects
-      run: dotnet build Imagile.EntityFrameworkCore.sln --configuration Release --no-restore
-
-    - name: Run sample tests
-      run: dotnet test Samples/SampleApp.Tests/SampleApp.Tests.csproj --configuration Release --no-build --verbosity normal
+      run: dotnet build Imagile.Framework.sln --configuration Release --no-restore

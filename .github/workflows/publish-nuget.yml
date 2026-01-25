@@ -40,10 +40,10 @@ jobs:
           10.0.x
 
     - name: Restore dependencies
-      run: dotnet restore Imagile.EntityFrameworkCore.Tests/Imagile.EntityFrameworkCore.Tests.csproj
+      run: dotnet restore src/Imagile.Framework.EntityFrameworkCore.Testing/Imagile.Framework.EntityFrameworkCore.Testing.csproj
 
     - name: Build
-      run: dotnet build Imagile.EntityFrameworkCore.Tests/Imagile.EntityFrameworkCore.Tests.csproj --configuration Release --no-restore
+      run: dotnet build src/Imagile.Framework.EntityFrameworkCore.Testing/Imagile.Framework.EntityFrameworkCore.Testing.csproj --configuration Release --no-restore
 
     - name: Pack
       run: |
@@ -53,7 +53,7 @@ jobs:
           VERSION="${{ steps.gitversion.outputs.nuGetVersionV2 }}"
         fi
         echo "Packing version: $VERSION"
-        dotnet pack Imagile.EntityFrameworkCore.Tests/Imagile.EntityFrameworkCore.Tests.csproj \
+        dotnet pack src/Imagile.Framework.EntityFrameworkCore.Testing/Imagile.Framework.EntityFrameworkCore.Testing.csproj \
           --configuration Release \
           --no-build \
           --output ./artifacts \

@@ -1,4 +1,4 @@
-# Imagile.EntityFrameworkCore.Tests
+# Imagile.Framework.EntityFrameworkCore.Testing
 
 Opinionated convention tests for Entity Framework Core DbContexts with fluent exclusion configuration.
 
@@ -16,7 +16,7 @@ Opinionated convention tests for Entity Framework Core DbContexts with fluent ex
 ## Installation
 
 ```bash
-dotnet add package Imagile.EntityFrameworkCore.Tests
+dotnet add package Imagile.Framework.EntityFrameworkCore.Testing
 ```
 
 ## Built-in Convention Rules
@@ -74,7 +74,7 @@ Validates that Enum properties (except primary and foreign keys) end with "Type"
 Create a test class that inherits from `DbContextConventionTests`:
 
 ```csharp
-using Imagile.EntityFrameworkCore.Tests;
+using Imagile.Framework.EntityFrameworkCore.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -176,7 +176,7 @@ protected override IEnumerable<DbContext> CreateContexts()
 The package includes an `InMemoryDatabaseTest<TContext>` base class for easy in-memory SQLite testing:
 
 ```csharp
-using Imagile.EntityFrameworkCore.Tests.Infrastructure;
+using Imagile.Framework.EntityFrameworkCore.Testing.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 public class MyRepositoryTests : InMemoryDatabaseTest<MyDbContext>
