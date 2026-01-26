@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <!-- Package Metadata (shared across all packages) -->
-    <Authors>Imagile</Authors>
+    <Authors>Imagile, Sunny Kolattukudy</Authors>
     <Company>Imagile</Company>
     <Copyright>Copyright (c) 2024 Imagile. All rights reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
