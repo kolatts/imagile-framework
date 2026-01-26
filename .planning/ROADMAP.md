@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Core Package** - Zero-dependency attribute and pattern library
 - [x] **Phase 3: EF Core Package** - Audit logging system with change tracking
 - [x] **Phase 4: Blazor Package** - Application Insights telemetry integration
-- [ ] **Phase 5: Configuration Abstractions** - Configuration patterns from imagile-app
+- [x] **Phase 5: Configuration Abstractions** - Configuration patterns from imagile-app
 - [ ] **Phase 6: Azure Storage Abstractions** - Azure Storage queue/blob/table abstractions
 - [ ] **Phase 7: Publishing & Documentation** - NuGet metadata and release automation
 
@@ -94,15 +94,20 @@ Plans:
 - [x] 04-04-PLAN.md - Unit tests and final verification
 
 ### Phase 5: Configuration Abstractions
-**Goal**: Consider Configuration abstractions that can be made to pull into the framework ideas from the imagile-app repo.
+**Goal**: Extract reusable configuration patterns from imagile-app into Imagile.Framework.Configuration package with AppTokenCredential, Key Vault reference replacement, and validation support.
 **Depends on**: Phase 4
-**Plans**: 0 plans
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 5 to break down)
+- [x] 05-01-PLAN.md - Package scaffold + AppTokenCredential migration
+- [x] 05-02-PLAN.md - Key Vault reference replacement (TDD)
+- [x] 05-03-PLAN.md - Fluent API for DI registration
 
-**Details:**
-[To be added during planning]
+**Success Criteria** (what must be TRUE):
+  1. Developer can reference Imagile.Framework.Configuration package and use AppTokenCredential for Azure authentication
+  2. Configuration values with @KeyVault(SecretName) syntax are replaced at startup
+  3. Fluent API (AddFrameworkConfiguration) provides clean DI registration
+  4. Fail-fast behavior on missing secrets or invalid configuration
 
 ### Phase 6: Azure Storage Abstractions
 **Goal**: Phase for Abstracting Azure Storage and queue / blob / table entities.
@@ -143,10 +148,10 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 2. Core Package | 4/4 | ✓ Complete | 2026-01-25 |
 | 3. EF Core Package | 5/5 | ✓ Complete | 2026-01-25 |
 | 4. Blazor Package | 4/4 | ✓ Complete | 2026-01-26 |
-| 5. Configuration Abstractions | 0/? | Not started | - |
+| 5. Configuration Abstractions | 3/3 | ✓ Complete | 2026-01-26 |
 | 6. Azure Storage Abstractions | 0/? | Not started | - |
 | 7. Publishing & Documentation | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-01-25*
-*Last updated: 2026-01-26 after phase reordering (Publishing moved to Phase 7)*
+*Last updated: 2026-01-26 after Phase 5 execution*
