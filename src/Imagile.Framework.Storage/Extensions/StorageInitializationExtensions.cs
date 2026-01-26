@@ -77,8 +77,8 @@ public static class StorageInitializationExtensions
                     var queueClient = queueServiceClient.GetQueueClient(queueName);
                     var response = await queueClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
-                    // Status 201 means resource was created (not 204 for already exists)
-                    if (response?.Status == 201)
+                    // Check if queue was created (status 201)
+                    if (response.Status == 201)
                     {
                         result.CreatedQueues.Add($"{group.Key}/{queueName}");
                     }
@@ -107,8 +107,8 @@ public static class StorageInitializationExtensions
                     var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
                     var response = await containerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
-                    // Check if container was created (Status 201 = Created, 200 or null = Already exists)
-                    if (response != null && response.GetRawResponse().Status == 201)
+                    // Check if container was created (response has value when created, null when exists)
+                    if (response?.Value != null)
                     {
                         result.CreatedContainers.Add($"{group.Key}/{containerName}");
                     }
