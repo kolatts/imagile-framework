@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Imagile.Framework.Storage</PackageId>
+    <Description>Azure Storage abstractions for .NET applications. Includes type-safe interfaces for Queue and Blob Storage with convention-based initialization and multi-storage-account support.</Description>
+    <PackageTags>azure;storage;queue;blob;abstractions;framework</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Queues" />
+    <PackageReference Include="Azure.Storage.Blobs" />
+    <PackageReference Include="Microsoft.Extensions.Azure" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Imagile.Framework.Configuration\Imagile.Framework.Configuration.csproj" />
+  </ItemGroup>
+
+</Project>
