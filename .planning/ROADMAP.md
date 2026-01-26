@@ -137,10 +137,12 @@ Plans:
   3. Symbol packages (.snupkg) published with SourceLink enabling step-through debugging
   4. Each package has README with usage examples visible on NuGet.org package page
   5. Comprehensive repository README documents package structure, dependencies, and consumption patterns
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] (To be created during phase planning)
+- [ ] 07-01-PLAN.md - Package READMEs (Core, EntityFrameworkCore, Blazor.ApplicationInsights, Storage)
+- [ ] 07-02-PLAN.md - Repository README and NuGet metadata (icon, SourceLink, symbols)
+- [ ] 07-03-PLAN.md - GitHub Actions workflow update (all packages, symbol packages)
 
 ## Progress
 
@@ -157,8 +159,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 4. Blazor Package | 4/4 | Complete | 2026-01-26 |
 | 5. Configuration Abstractions | 3/3 | Complete | 2026-01-26 |
 | 6. Azure Storage Abstractions | 4/4 | ✓ Complete | 2026-01-26 |
-| 7. Publishing & Documentation | 0/? | Not started | - |
+| 7. Publishing & Documentation | 0/3 | Planned | - |
 
 ---
 *Roadmap created: 2026-01-25*
-*Last updated: 2026-01-26 after Phase 6 planning*
+*Last updated: 2026-01-26 after Phase 7 planning*
