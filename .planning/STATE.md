@@ -8,19 +8,19 @@ updated: 2026-01-26
 ## Current Position
 
 **Phase:** 07 of 7 (Publishing and Documentation)
-**Plan:** 02 of 4 (Repository Documentation and NuGet Metadata)
+**Plan:** 03 of 4 (GitHub Actions Publishing Workflow)
 **Status:** In progress
-**Last activity:** 2026-01-26 - Completed 07-02-PLAN.md
+**Last activity:** 2026-01-25 - Completed 07-03-PLAN.md
 
-**Phase Progress:** 50% complete (2 of 4 plans)
+**Phase Progress:** 75% complete (3 of 4 plans)
 ```
-██░░
+███░
 ```
 
 ## Session Continuity
 
-**Last session:** 2026-01-26 04:04:34 UTC
-**Stopped at:** Completed 07-02-PLAN.md
+**Last session:** 2026-01-25 23:07:33 UTC
+**Stopped at:** Completed 07-03-PLAN.md
 **Resume file:** None
 
 ## Accumulated Decisions
@@ -53,6 +53,9 @@ updated: 2026-01-26
 | 07-02 | Repository README as package catalog | Main README lists packages with architecture overview |
 | 07-02 | 128x128 PNG icon with "IF" branding | Simple Azure blue background with white text |
 | 07-02 | SourceLink package version in Directory.Packages.props | CPM requires versions in PackageVersion items, not PackageReference |
+| 07-03 | Run tests in both CI and publish workflows | CI prevents broken code from merging; publish prevents broken releases |
+| 07-03 | Explicit pack steps for all 6 packages | Clear visibility and control over what gets published |
+| 07-03 | Separate push commands for .nupkg and .snupkg | GitHub Actions wildcard *.nupkg doesn't match .snupkg files |
 
 ## Blockers & Concerns
 
@@ -62,13 +65,13 @@ updated: 2026-01-26
 
 ## Alignment Status
 
-**Last verified:** 2026-01-26
+**Last verified:** 2026-01-25
 
 **Brief status:**
-- Phase 07 Plan 02 complete - Repository README and NuGet metadata enhancement
-- Repository README (175 lines): package catalog table, architecture dependency tree, quick start examples, MIT license, contributing guidelines
-- NuGet metadata enhanced: Copyright, PackageIcon (128x128 PNG), SourceLink configuration, symbol packages (.snupkg)
-- Package icon created: 615-byte PNG with "IF" text on Azure blue background
-- SourceLink configured for GitHub with deterministic builds and CI detection
-- All packages build and pack successfully (0 errors, .nupkg + .snupkg generated)
-- Ready for 07-03 (NuGet Publishing Workflow)
+- Phase 07 Plan 03 complete - GitHub Actions workflows updated for complete CI/CD
+- CI workflow (.github/workflows/ci.yml): Added automated test execution on every push/PR to main or develop
+- Publish workflow (.github/workflows/publish-nuget.yml): Expanded to publish all 6 packages with symbol packages
+- All 6 packages now have pack commands: Core, EntityFrameworkCore, EntityFrameworkCore.Testing, Blazor.ApplicationInsights, Configuration, Storage
+- Symbol packages (.snupkg) explicitly pushed alongside main packages (.nupkg)
+- Both workflows validated: proper YAML syntax, no tabs, correct indentation, multiline run syntax
+- Ready for 07-04 (Final Verification and First Release)
