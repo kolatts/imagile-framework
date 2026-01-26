@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imagile.Framework.EntityFra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imagile.Framework.Blazor.ApplicationInsights", "src\Imagile.Framework.Blazor.ApplicationInsights\Imagile.Framework.Blazor.ApplicationInsights.csproj", "{AFE9C181-5421-456B-B191-D876045BC782}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imagile.Framework.Blazor.ApplicationInsights.Tests", "tests\Imagile.Framework.Blazor.ApplicationInsights.Tests\Imagile.Framework.Blazor.ApplicationInsights.Tests.csproj", "{AB7B384F-EC64-4D7C-A4E0-2548BBBAF2BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +75,18 @@ Global
 		{AFE9C181-5421-456B-B191-D876045BC782}.Release|x64.Build.0 = Release|Any CPU
 		{AFE9C181-5421-456B-B191-D876045BC782}.Release|x86.ActiveCfg = Release|Any CPU
 		{AFE9C181-5421-456B-B191-D876045BC782}.Release|x86.Build.0 = Release|Any CPU
+		{AB7B384F-EC64-4D7C-A4E0-2548BBBAF2BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB7B384F-EC64-4D7C-A4E0-2548BBBAF2BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB7B384F-EC64-4D7C-A4E0-2548BBBAF2BB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AB7B384F-EC64-4D7C-A4E0-2548BBBAF2BB}.Debug|x64.Build.0 = Debug|Any CPU
+		{AB7B384F-EC64-4D7C-A4E0-2548BBBAF2BB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AB7B384F-EC64-4D7C-A4E0-2548BBBAF2BB}.Debug|x86.Build.0 = Debug|Any CPU
+		{AB7B384F-EC64-4D7C-A4E0-2548BBBAF2BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB7B384F-EC64-4D7C-A4E0-2548BBBAF2BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB7B384F-EC64-4D7C-A4E0-2548BBBAF2BB}.Release|x64.ActiveCfg = Release|Any CPU
+		{AB7B384F-EC64-4D7C-A4E0-2548BBBAF2BB}.Release|x64.Build.0 = Release|Any CPU
+		{AB7B384F-EC64-4D7C-A4E0-2548BBBAF2BB}.Release|x86.ActiveCfg = Release|Any CPU
+		{AB7B384F-EC64-4D7C-A4E0-2548BBBAF2BB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,5 +96,6 @@ Global
 		{299BD054-2592-495A-9843-80E5C04B8794} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{FF21E60B-5F9E-48D3-A1AB-06CBFCE86DD0} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{AFE9C181-5421-456B-B191-D876045BC782} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{AB7B384F-EC64-4D7C-A4E0-2548BBBAF2BB} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal
