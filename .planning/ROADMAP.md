@@ -110,15 +110,22 @@ Plans:
   4. Fail-fast behavior on missing secrets or invalid configuration
 
 ### Phase 6: Azure Storage Abstractions
-**Goal**: Phase for Abstracting Azure Storage and queue / blob / table entities.
+**Goal**: Create Azure Storage abstractions for Queue and Blob Storage with type-safe interfaces, convention-based initialization, and multi-storage-account support.
 **Depends on**: Phase 5
-**Plans**: 0 plans
+**Plans**: 4 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 6 to break down)
+- [ ] 06-01-PLAN.md - Package scaffold with IQueueMessage, IBlobContainer interfaces and StorageAccountAttribute
+- [ ] 06-02-PLAN.md - Storage client extensions and assembly scanner
+- [ ] 06-03-PLAN.md - Fluent DI registration and initialization helper
+- [ ] 06-04-PLAN.md - Unit tests for all Storage components
 
-**Details:**
-[To be added during planning]
+**Success Criteria** (what must be TRUE):
+  1. Developer can implement IQueueMessage with static abstract DefaultQueueName for type-safe queue access
+  2. Developer can implement IBlobContainer with static abstract DefaultContainerName for type-safe container access
+  3. AddStorageAbstractions() fluent API registers Azure Storage clients with Microsoft.Extensions.Azure
+  4. InitializeStorageResourcesAsync() creates all scanned queues and containers at startup
+  5. StorageAccountAttribute enables multi-storage-account scenarios
 
 ### Phase 7: Publishing & Documentation
 **Goal**: Complete NuGet package metadata, publish all packages to NuGet.org, and create comprehensive documentation.
@@ -138,20 +145,20 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 **Note:** Phase 3 and Phase 4 can execute in parallel after Phase 2 completes (no dependency between them).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Infrastructure | 2/2 | ✓ Complete | 2026-01-25 |
-| 2. Core Package | 4/4 | ✓ Complete | 2026-01-25 |
-| 3. EF Core Package | 5/5 | ✓ Complete | 2026-01-25 |
-| 4. Blazor Package | 4/4 | ✓ Complete | 2026-01-26 |
-| 5. Configuration Abstractions | 3/3 | ✓ Complete | 2026-01-26 |
-| 6. Azure Storage Abstractions | 0/? | Not started | - |
+| 1. Foundation & Infrastructure | 2/2 | Complete | 2026-01-25 |
+| 2. Core Package | 4/4 | Complete | 2026-01-25 |
+| 3. EF Core Package | 5/5 | Complete | 2026-01-25 |
+| 4. Blazor Package | 4/4 | Complete | 2026-01-26 |
+| 5. Configuration Abstractions | 3/3 | Complete | 2026-01-26 |
+| 6. Azure Storage Abstractions | 0/4 | Planned | - |
 | 7. Publishing & Documentation | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-01-25*
-*Last updated: 2026-01-26 after Phase 5 execution*
+*Last updated: 2026-01-26 after Phase 6 planning*
