@@ -15,10 +15,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation & Infrastructure** - Project structure, renaming, and build configuration
 - [x] **Phase 2: Core Package** - Zero-dependency attribute and pattern library
 - [x] **Phase 3: EF Core Package** - Audit logging system with change tracking
-- [ ] **Phase 4: Blazor Package** - Application Insights telemetry integration
-- [ ] **Phase 5: Publishing & Documentation** - NuGet metadata and release automation
-- [ ] **Phase 6: Configuration Abstractions** - Configuration patterns from imagile-app
-- [ ] **Phase 7: Azure Storage Abstractions** - Azure Storage queue/blob/table abstractions
+- [x] **Phase 4: Blazor Package** - Application Insights telemetry integration
+- [ ] **Phase 5: Configuration Abstractions** - Configuration patterns from imagile-app
+- [ ] **Phase 6: Azure Storage Abstractions** - Azure Storage queue/blob/table abstractions
+- [ ] **Phase 7: Publishing & Documentation** - NuGet metadata and release automation
 
 ## Phase Details
 
@@ -93,23 +93,19 @@ Plans:
 - [x] 04-03-PLAN.md - ILoggerProvider integration for automatic log shipping
 - [x] 04-04-PLAN.md - Unit tests and final verification
 
-### Phase 5: Publishing & Documentation
-**Goal**: Complete NuGet package metadata, publish all packages to NuGet.org, and create comprehensive documentation.
-**Depends on**: Phase 3, Phase 4
-**Requirements**: INFRA-04, INFRA-05
-**Success Criteria** (what must be TRUE):
-  1. All three packages (Core, EntityFrameworkCore, BlazorApplicationInsights) published to NuGet.org with correct metadata
-  2. GitHub Actions workflow automatically publishes packages when version tags are pushed
-  3. Symbol packages (.snupkg) published with SourceLink enabling step-through debugging
-  4. Each package has README with usage examples visible on NuGet.org package page
-  5. Comprehensive repository README documents package structure, dependencies, and consumption patterns
-**Plans**: TBD
+### Phase 5: Configuration Abstractions
+**Goal**: Consider Configuration abstractions that can be made to pull into the framework ideas from the imagile-app repo.
+**Depends on**: Phase 4
+**Plans**: 0 plans
 
 Plans:
-- [ ] (To be created during phase planning)
+- [ ] TBD (run /gsd:plan-phase 5 to break down)
 
-### Phase 6: Configuration Abstractions
-**Goal**: Consider Configuration abstractions that can be made to pull into the framework ideas from the imagile-app repo.
+**Details:**
+[To be added during planning]
+
+### Phase 6: Azure Storage Abstractions
+**Goal**: Phase for Abstracting Azure Storage and queue / blob / table entities.
 **Depends on**: Phase 5
 **Plans**: 0 plans
 
@@ -119,16 +115,20 @@ Plans:
 **Details:**
 [To be added during planning]
 
-### Phase 7: Azure Storage Abstractions
-**Goal**: Phase for Abstracting Azure Storage and queue / blob / table entities.
+### Phase 7: Publishing & Documentation
+**Goal**: Complete NuGet package metadata, publish all packages to NuGet.org, and create comprehensive documentation.
 **Depends on**: Phase 6
-**Plans**: 0 plans
+**Requirements**: INFRA-04, INFRA-05
+**Success Criteria** (what must be TRUE):
+  1. All packages (Core, EntityFrameworkCore, Blazor.ApplicationInsights, and any new packages) published to NuGet.org with correct metadata
+  2. GitHub Actions workflow automatically publishes packages when version tags are pushed
+  3. Symbol packages (.snupkg) published with SourceLink enabling step-through debugging
+  4. Each package has README with usage examples visible on NuGet.org package page
+  5. Comprehensive repository README documents package structure, dependencies, and consumption patterns
+**Plans**: TBD
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 7 to break down)
-
-**Details:**
-[To be added during planning]
+- [ ] (To be created during phase planning)
 
 ## Progress
 
@@ -143,10 +143,10 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 2. Core Package | 4/4 | ✓ Complete | 2026-01-25 |
 | 3. EF Core Package | 5/5 | ✓ Complete | 2026-01-25 |
 | 4. Blazor Package | 4/4 | ✓ Complete | 2026-01-26 |
-| 5. Publishing & Documentation | 0/? | Not started | - |
-| 6. Configuration Abstractions | 0/? | Not started | - |
-| 7. Azure Storage Abstractions | 0/? | Not started | - |
+| 5. Configuration Abstractions | 0/? | Not started | - |
+| 6. Azure Storage Abstractions | 0/? | Not started | - |
+| 7. Publishing & Documentation | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-01-25*
-*Last updated: 2026-01-25 after Phase 6 and 7 additions*
+*Last updated: 2026-01-26 after phase reordering (Publishing moved to Phase 7)*

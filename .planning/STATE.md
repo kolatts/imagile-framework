@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-25)
 
 **Core value:** Enable rapid creation of production-ready C# applications by providing battle-tested conventions and patterns that enforce consistency while remaining flexible enough for both personal projects and enterprise work.
-**Current focus:** Phase 5 - Publishing & Documentation
+**Current focus:** Phase 5 - Configuration Abstractions
 
 ## Current Position
 
-Phase: 5 of 7 (Publishing & Documentation)
+Phase: 5 of 7 (Configuration Abstractions)
 Plan: Not started
 Status: Ready to plan
 Last activity: 2026-01-26 — Completed Phase 4 (Blazor Package)
 
-Progress: [███████░░░] 75%
+Progress: [███████░░░] 57%
 
 ## Performance Metrics
 
@@ -114,15 +114,15 @@ None yet.
 
 ### Roadmap Evolution
 
-- Phase 6 added: Consider Configuration abstractions that can be made to pull into the framework ideas from the imagile-app repo
-- Phase 7 added: Phase for Abstracting Azure Storage and queue / blob / table entities
+- Phases 5-6 added: Configuration abstractions and Azure Storage abstractions (2026-01-25)
+- Phase order adjusted: Publishing & Documentation moved to Phase 7 (after feature development) (2026-01-26)
 
 ## Session Continuity
 
-Last session: 2026-01-26 00:30 UTC
-Stopped at: Phase 4 complete (all plans verified)
+Last session: 2026-01-26 00:35 UTC
+Stopped at: Phase 4 complete, roadmap reordered
 Resume file: None
-Next: /gsd:plan-phase 5 to start Publishing & Documentation
+Next: /gsd:plan-phase 5 to start Configuration Abstractions
 
 ---
 *State initialized: 2026-01-25*
