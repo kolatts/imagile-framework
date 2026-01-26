@@ -4,7 +4,12 @@
     <PackageId>Imagile.Framework.Configuration</PackageId>
     <Description>Azure configuration abstractions for .NET applications. Includes AppTokenCredential for cloud/local authentication, Key Vault reference replacement, and configuration validation with data annotations.</Description>
     <PackageTags>azure;configuration;keyvault;identity;validation;framework</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Imagile.Framework.Core\Imagile.Framework.Core.csproj" />
