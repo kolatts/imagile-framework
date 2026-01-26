@@ -4,7 +4,9 @@
     <!-- Package Metadata (shared across all packages) -->
     <Authors>Imagile</Authors>
     <Company>Imagile</Company>
+    <Copyright>Copyright (c) 2024 Imagile. All rights reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/imagile/imagile-framework</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/imagile/imagile-framework</PackageProjectUrl>
@@ -23,6 +25,14 @@
     <IsTrimmable>true</IsTrimmable>
     <IsAotCompatible>true</IsAotCompatible>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+
+    <!-- SourceLink Configuration -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <!-- Conditional IsPackable for non-test projects -->
@@ -33,5 +43,15 @@
   <PropertyGroup Condition="$(MSBuildProjectName.Contains('Tests')) OR $(MSBuildProjectName.Contains('Test')) OR $(MSBuildProjectName.Contains('.Sample'))">
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+
+  <!-- SourceLink Package Reference -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+  </ItemGroup>
+
+  <!-- Include icon in all packages -->
+  <ItemGroup Condition="'$(IsPackable)' == 'true'">
+    <None Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>
