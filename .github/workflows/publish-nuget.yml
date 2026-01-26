@@ -27,6 +27,9 @@ jobs:
     - name: Build solution
       run: dotnet build Imagile.Framework.sln --configuration Release --no-restore
 
+    - name: Run tests
+      run: dotnet test Imagile.Framework.sln --configuration Release --no-build --verbosity normal
+
     - name: Pack Core package
       run: dotnet pack src/Imagile.Framework.Core/Imagile.Framework.Core.csproj --configuration Release --no-build --output ./packages
 
@@ -36,5 +39,16 @@ jobs:
     - name: Pack Blazor.ApplicationInsights package
       run: dotnet pack src/Imagile.Framework.Blazor.ApplicationInsights/Imagile.Framework.Blazor.ApplicationInsights.csproj --configuration Release --no-build --output ./packages
 
-    - name: Publish to NuGet.org
-      run: dotnet nuget push ./packages/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+    - name: Pack Configuration package
+      run: dotnet pack src/Imagile.Framework.Configuration/Imagile.Framework.Configuration.csproj --configuration Release --no-build --output ./packages
+
+    - name: Pack Storage package
+      run: dotnet pack src/Imagile.Framework.Storage/Imagile.Framework.Storage.csproj --configuration Release --no-build --output ./packages
+
+    - name: Pack EntityFrameworkCore.Testing package
+      run: dotnet pack src/Imagile.Framework.EntityFrameworkCore.Testing/Imagile.Framework.EntityFrameworkCore.Testing.csproj --configuration Release --no-build --output ./packages
+
+    - name: Publish packages to NuGet.org
+      run: |
+        dotnet nuget push ./packages/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        dotnet nuget push ./packages/*.snupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
