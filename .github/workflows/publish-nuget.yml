@@ -6,6 +6,10 @@ on:
       - 'v*.*.*'
   workflow_dispatch:
 
+permissions:
+  id-token: write  # Required for OIDC trusted publishing
+  contents: read
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -50,5 +54,5 @@ jobs:
 
     - name: Publish packages to NuGet.org
       run: |
-        dotnet nuget push ./packages/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
-        dotnet nuget push ./packages/*.snupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        dotnet nuget push ./packages/*.nupkg --source https://api.nuget.org/v3/index.json --skip-duplicate
+        dotnet nuget push ./packages/*.snupkg --source https://api.nuget.org/v3/index.json --skip-duplicate
