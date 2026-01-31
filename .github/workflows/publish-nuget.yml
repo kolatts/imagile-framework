@@ -53,6 +53,8 @@ jobs:
       run: dotnet pack src/Imagile.Framework.EntityFrameworkCore.Testing/Imagile.Framework.EntityFrameworkCore.Testing.csproj --configuration Release --no-build --output ./packages
 
     - name: Publish packages to NuGet.org
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
       run: |
-        dotnet nuget push ./packages/*.nupkg --source https://api.nuget.org/v3/index.json --skip-duplicate
-        dotnet nuget push ./packages/*.snupkg --source https://api.nuget.org/v3/index.json --skip-duplicate
+        dotnet nuget push ./packages/*.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY --skip-duplicate
+        dotnet nuget push ./packages/*.snupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY --skip-duplicate
