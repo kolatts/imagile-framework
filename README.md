@@ -2,6 +2,8 @@
 
 Production-ready .NET packages with zero-dependency foundations and Azure-native integrations.
 
+[![NuGet Core](https://img.shields.io/nuget/v/Imagile.Framework.Core.svg)](https://www.nuget.org/packages/Imagile.Framework.Core) [![NuGet EF](https://img.shields.io/nuget/v/Imagile.Framework.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Imagile.Framework.EntityFrameworkCore) [![NuGet EF Testing](https://img.shields.io/nuget/v/Imagile.Framework.EntityFrameworkCore.Testing.svg)](https://www.nuget.org/packages/Imagile.Framework.EntityFrameworkCore.Testing) [![NuGet Blazor](https://img.shields.io/nuget/v/Imagile.Framework.Blazor.ApplicationInsights.svg)](https://www.nuget.org/packages/Imagile.Framework.Blazor.ApplicationInsights) [![NuGet Configuration](https://img.shields.io/nuget/v/Imagile.Framework.Configuration.svg)](https://www.nuget.org/packages/Imagile.Framework.Configuration) [![NuGet Storage](https://img.shields.io/nuget/v/Imagile.Framework.Storage.svg)](https://www.nuget.org/packages/Imagile.Framework.Storage)
+
 ## Overview
 
 The Imagile Framework is a collection of opinionated, well-tested NuGet packages designed to accelerate .NET development. From declarative attributes to Azure Storage abstractions, each package solves specific challenges while maintaining clean separation of concerns.
