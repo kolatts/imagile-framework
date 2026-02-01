@@ -4,12 +4,12 @@
     <!-- Package Metadata (shared across all packages) -->
     <Authors>Imagile, Sunny Kolattukudy</Authors>
     <Company>Imagile</Company>
-    <Copyright>Copyright (c) 2024 Imagile. All rights reserved.</Copyright>
+    <Copyright>Copyright (c) 2026 Imagile. All rights reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
-    <RepositoryUrl>https://github.com/imagile/imagile-framework</RepositoryUrl>
+    <RepositoryUrl>https://github.com/kolatts/imagile-framework</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageProjectUrl>https://github.com/imagile/imagile-framework</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/kolatts/imagile-framework</PackageProjectUrl>
 
     <!-- Build Settings -->
     <TargetFramework>net10.0</TargetFramework>
