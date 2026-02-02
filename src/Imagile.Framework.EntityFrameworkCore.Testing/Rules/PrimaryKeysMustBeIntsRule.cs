@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Imagile.Framework.EntityFrameworkCore.Testing.Rules;
 
 /// <summary>
-/// Rule that validates single-property primary keys are of type int or long.
+/// Rule that validates single-property primary keys are of type int, long, or enum.
 /// </summary>
 public class PrimaryKeysMustBeIntsRule : IConventionRule
 {
-    public string Name => "Primary keys must be int or long";
+    public string Name => "Primary keys must be int, long, or enum";
 
     public IEnumerable<ConventionViolation> Validate(
         IEnumerable<DbContext> contexts,
@@ -59,11 +59,14 @@ public class PrimaryKeysMustBeIntsRule : IConventionRule
 
                 var clrType = keyProperty.ClrType;
 
-                // Allow int and long (including nullable versions)
-                if (clrType != typeof(int) &&
-                    clrType != typeof(int?) &&
-                    clrType != typeof(long) &&
-                    clrType != typeof(long?))
+                // Allow int, long, and enums (enums are backed by int storage)
+                var isValidType = clrType == typeof(int) ||
+                    clrType == typeof(int?) ||
+                    clrType == typeof(long) ||
+                    clrType == typeof(long?) ||
+                    clrType.IsEnum;
+
+                if (!isValidType)
                 {
                     violations.Add(new ConventionViolation(
                         contextName,
