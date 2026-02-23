@@ -219,4 +219,21 @@ public class LoggingTests
         traceTelemetry.Should().NotBeNull();
         traceTelemetry!.SeverityLevel.Should().Be(expectedSeverity);
     }
+
+    [Fact]
+    public void Logger_LogInformation_DoesNotThrow_WhenTrackTaskFaulted()
+    {
+        // Arrange - use an ApplicationInsights instance that has not been initialized
+        // so the task returned by TrackTrace would have faulted (NullReferenceException)
+        // if ObserveTask were not in place. The fire-and-forget call must not propagate.
+        var uninitializedAppInsights = new ApplicationInsights();
+        var logger = new ApplicationInsightsLogger("TestCategory", uninitializedAppInsights)
+        {
+            MinLogLevel = LogLevel.Trace
+        };
+
+        // Act & Assert - must not throw despite the underlying service being uninitialized
+        var act = () => logger.LogInformation("Fire-and-forget safety test");
+        act.Should().NotThrow();
+    }
 }

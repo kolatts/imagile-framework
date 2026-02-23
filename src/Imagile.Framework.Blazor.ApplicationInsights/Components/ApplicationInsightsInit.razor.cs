@@ -27,7 +27,7 @@ namespace Imagile.Framework.Blazor.ApplicationInsights.Components;
 /// <example>
 /// <code>
 /// // In App.razor:
-/// &lt;ApplicationInsightsInit IsWasmStandalone="true" /&gt;
+/// &lt;ApplicationInsightsInit /&gt;
 /// </code>
 /// </example>
 public partial class ApplicationInsightsInit : ComponentBase, IDisposable
@@ -38,19 +38,6 @@ public partial class ApplicationInsightsInit : ComponentBase, IDisposable
     [Inject] private ILogger<ApplicationInsightsInit> Logger { get; set; } = default!;
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
     [Inject] private ITelemetryInitializerFactory TelemetryInitializerFactory { get; set; } = default!;
-
-    /// <summary>
-    /// Gets or sets whether running in Blazor WASM Standalone mode.
-    /// </summary>
-    /// <value>
-    /// <c>true</c> for WASM standalone; <c>false</c> for hosted scenarios. Default is <c>false</c>.
-    /// </value>
-    /// <remarks>
-    /// When <c>true</c>, the component dynamically imports the JavaScript module.
-    /// When <c>false</c>, the module is loaded via a script tag in the Razor markup.
-    /// </remarks>
-    [Parameter]
-    public bool IsWasmStandalone { get; set; }
 
     private string script { get; set; } = string.Empty;
 
@@ -70,38 +57,40 @@ public partial class ApplicationInsightsInit : ComponentBase, IDisposable
     /// <inheritdoc/>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            ApplicationInsights.InitJSRuntime(JSRuntime);
-        }
+        if (!firstRender)
+            return;
 
-        if (firstRender && IsWasmStandalone)
-        {
-            await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/Imagile.Framework.Blazor.ApplicationInsights/BlazorApplicationInsights.lib.module.js");
+        ApplicationInsights.InitJSRuntime(JSRuntime);
 
-            if (Config.Config != null)
+        if (Config.Config != null)
+        {
+            try
             {
-                try
-                {
-                    // Skip UpdateCfg for WASM standalone - config is already in the rendered snippet
-                    // The SDK stub does not have updateCfg in its queue proxy, causing errors before SDK loads
+                // Skip UpdateCfg - config is already in the rendered snippet
+                // The SDK stub does not have updateCfg in its queue proxy, causing errors before SDK loads
 
-                    // Add telemetry initializer from factory for context injection
-                    var initializer = await TelemetryInitializerFactory.CreateInitializerAsync();
-                    await ApplicationInsights.AddTelemetryInitializer(initializer);
+                // Add telemetry initializer from factory for context injection
+                var initializer = await TelemetryInitializerFactory.CreateInitializerAsync();
+                await ApplicationInsights.AddTelemetryInitializer(initializer);
 
-                    await ApplicationInsights.TrackPageView();
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError(ex, "Failed to track page view. An ad blocker or CSP may be blocking the App Insights script.");
-                }
+                await ApplicationInsights.TrackPageView();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to track page view. An ad blocker or CSP may be blocking the App Insights script.");
             }
         }
 
-        if (firstRender && Config.OnAppInsightsInit != null)
+        if (Config.OnAppInsightsInit != null)
         {
-            await Config.OnAppInsightsInit(ApplicationInsights);
+            try
+            {
+                await Config.OnAppInsightsInit(ApplicationInsights);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "An error occurred in the OnAppInsightsInit callback.");
+            }
         }
     }
 

@@ -39,6 +39,18 @@ public interface IApplicationInsights : IAppInsights, IDependenciesPlugin, IProp
     Task UpdateCfg(Config newConfig, bool mergeExisting = true);
 
     /// <summary>
+    /// Gets a value indicating whether the JS runtime has been initialized.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> after <see cref="InitJSRuntime"/> has been called; otherwise, <c>false</c>.
+    /// </value>
+    /// <remarks>
+    /// Telemetry methods silently no-op when <c>false</c>, preventing <see cref="NullReferenceException"/>
+    /// if telemetry is called before the ApplicationInsightsInit component renders.
+    /// </remarks>
+    bool IsInitialized { get; }
+
+    /// <summary>
     /// Sets JSRuntime for the service
     /// </summary>
     /// <param name="jSRuntime"></param>

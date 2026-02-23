@@ -25,6 +25,12 @@ public class MockApplicationInsights : IApplicationInsights
         _calls.Clear();
     }
 
+    /// <summary>
+    /// Gets or sets whether the mock reports as initialized. Defaults to <c>true</c> so tests
+    /// that don't care about initialization state work without extra setup.
+    /// </summary>
+    public bool IsInitialized { get; set; } = true;
+
     public void InitJSRuntime(IJSRuntime jSRuntime)
     {
         _calls.Add(new TelemetryCall(nameof(InitJSRuntime), jSRuntime));

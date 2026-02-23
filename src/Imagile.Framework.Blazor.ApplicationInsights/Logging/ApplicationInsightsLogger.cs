@@ -171,7 +171,7 @@ public class ApplicationInsightsLogger : ILogger
 
         if (exception is null)
         {
-            _applicationInsights.TrackTrace(new TraceTelemetry { Message = message, SeverityLevel = severity, Properties = customDimensions });
+            ObserveTask(_applicationInsights.TrackTrace(new TraceTelemetry { Message = message, SeverityLevel = severity, Properties = customDimensions }));
             return;
         }
 
@@ -182,7 +182,7 @@ public class ApplicationInsightsLogger : ILogger
             Stack = exception.ToString()
         };
 
-        _applicationInsights.TrackException(new ExceptionTelemetry { Exception = error, Id = $"{eventId}", SeverityLevel = severity, Properties = customDimensions });
+        ObserveTask(_applicationInsights.TrackException(new ExceptionTelemetry { Exception = error, Id = $"{eventId}", SeverityLevel = severity, Properties = customDimensions }));
     }
 
     /// <summary>
@@ -284,4 +284,17 @@ public class ApplicationInsightsLogger : ILogger
         LogLevel.Critical => SeverityLevel.Critical,
         _ => SeverityLevel.Verbose
     };
+
+    /// <summary>
+    /// Observes a fire-and-forget task to prevent unobserved task exceptions.
+    /// </summary>
+    /// <param name="task">The task to observe.</param>
+    /// <remarks>
+    /// <see cref="Log{TState}"/> is synchronous but telemetry calls return <see cref="Task"/>.
+    /// Without observation, a faulted task would be swallowed silently or raise
+    /// <see cref="TaskScheduler.UnobservedTaskException"/>. This helper attaches a faulted
+    /// continuation that intentionally discards the exception, matching the fire-and-forget intent.
+    /// </remarks>
+    private static void ObserveTask(Task task)
+        => task.ContinueWith(static t => _ = t.Exception, TaskContinuationOptions.OnlyOnFaulted);
 }

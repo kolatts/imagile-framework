@@ -190,4 +190,84 @@ public class ApplicationInsightsTests
         mockJs.Invocations.Should().ContainSingle();
         mockJs.Invocations[0].Identifier.Should().Be("blazorApplicationInsights.trackDependencyData");
     }
+
+    [Fact]
+    public void IsInitialized_ReturnsFalse_BeforeInitJSRuntime()
+    {
+        // Arrange
+        var appInsights = new ApplicationInsights();
+
+        // Act & Assert
+        appInsights.IsInitialized.Should().BeFalse();
+    }
+
+    [Fact]
+    public void IsInitialized_ReturnsTrue_AfterInitJSRuntime()
+    {
+        // Arrange
+        var mockJs = new MockJSRuntime();
+        var appInsights = new ApplicationInsights();
+
+        // Act
+        appInsights.InitJSRuntime(mockJs);
+
+        // Assert
+        appInsights.IsInitialized.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task TrackEvent_BeforeInitJSRuntime_DoesNotThrow()
+    {
+        // Arrange
+        var appInsights = new ApplicationInsights();
+
+        // Act
+        var act = async () => await appInsights.TrackEvent(new EventTelemetry { Name = "TestEvent" });
+
+        // Assert
+        await act.Should().NotThrowAsync();
+    }
+
+    [Fact]
+    public async Task TrackTrace_BeforeInitJSRuntime_DoesNotThrow()
+    {
+        // Arrange
+        var appInsights = new ApplicationInsights();
+
+        // Act
+        var act = async () => await appInsights.TrackTrace(new TraceTelemetry { Message = "test" });
+
+        // Assert
+        await act.Should().NotThrowAsync();
+    }
+
+    [Fact]
+    public async Task TrackException_BeforeInitJSRuntime_DoesNotThrow()
+    {
+        // Arrange
+        var appInsights = new ApplicationInsights();
+
+        // Act
+        var act = async () => await appInsights.TrackException(new ExceptionTelemetry
+        {
+            Exception = new Error { Name = "TestError", Message = "msg" }
+        });
+
+        // Assert
+        await act.Should().NotThrowAsync();
+    }
+
+    [Fact]
+    public async Task Context_BeforeInitJSRuntime_ReturnsEmptyContext()
+    {
+        // Arrange
+        var appInsights = new ApplicationInsights();
+
+        // Act
+        var result = await appInsights.Context();
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<TelemetryContext>();
+    }
 }
