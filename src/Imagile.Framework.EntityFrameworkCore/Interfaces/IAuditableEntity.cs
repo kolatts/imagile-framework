@@ -37,7 +37,7 @@ namespace Imagile.Framework.EntityFrameworkCore.Interfaces;
 /// }
 /// </code>
 /// </example>
-public interface IAuditableEntity<TUserKey> : ITimestampedEntity
+public interface IAuditableEntity<TUserKey> : ITimestampedEntity, ISoftDeletable
 {
     /// <summary>
     /// Gets or sets the user identifier who created this entity.
@@ -55,15 +55,6 @@ public interface IAuditableEntity<TUserKey> : ITimestampedEntity
     /// Automatically updated from IAuditContextProvider.UserId on every SaveChanges.
     /// </remarks>
     TUserKey? ModifiedBy { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether this entity has been soft-deleted.
-    /// </summary>
-    /// <remarks>
-    /// When set to true, DeletedOn and DeletedBy are automatically populated.
-    /// Use global query filters to exclude soft-deleted entities from normal queries.
-    /// </remarks>
-    bool IsDeleted { get; set; }
 
     /// <summary>
     /// Gets or sets the UTC timestamp when this entity was soft-deleted.

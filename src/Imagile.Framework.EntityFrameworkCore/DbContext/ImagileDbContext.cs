@@ -4,6 +4,7 @@ using System.Reflection;
 using Imagile.Framework.Core.Interfaces;
 using Imagile.Framework.EntityFrameworkCore.Attributes;
 using Imagile.Framework.EntityFrameworkCore.Entities;
+using Imagile.Framework.EntityFrameworkCore.Extensions;
 using Imagile.Framework.EntityFrameworkCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -64,6 +65,29 @@ public abstract class ImagileDbContext<TUserKey, TTenantKey> : Microsoft.EntityF
     protected IAuditContextProvider<TUserKey, TTenantKey> AuditContext { get; }
 
     /// <summary>
+    /// Gets a value indicating whether string properties exceeding their configured
+    /// <c>MaxLength</c> should be automatically truncated before saving.
+    /// </summary>
+    /// <remarks>
+    /// Override and return <c>true</c> to enable automatic truncation.
+    /// When enabled, <see cref="DbContextExtensions.TruncateStringsToMaxLength"/> is called
+    /// at the start of every <c>SaveChangesAsync</c>. Default is <c>false</c>.
+    /// </remarks>
+    protected virtual bool EnableStringTruncation => false;
+
+    /// <summary>
+    /// Gets a value indicating whether the <see cref="Entities.EnumLookupValue"/> entity
+    /// should be registered and its table configured in the model.
+    /// </summary>
+    /// <remarks>
+    /// Override and return <c>true</c> to enable enum lookup value support.
+    /// When enabled, <see cref="ModelBuilderExtensions.ConfigureEnumLookupValues"/> is called
+    /// in <c>OnModelCreating</c>. Populate the table by calling
+    /// <see cref="DbContextExtensions.SeedEnumLookupValues"/> at runtime. Default is <c>false</c>.
+    /// </remarks>
+    protected virtual bool EnableEnumLookupValues => false;
+
+    /// <summary>
     /// Gets or sets the EntityChange records for change tracking.
     /// </summary>
     public DbSet<EntityChange<TUserKey>> EntityChanges => Set<EntityChange<TUserKey>>();
@@ -99,6 +123,12 @@ public abstract class ImagileDbContext<TUserKey, TTenantKey> : Microsoft.EntityF
     {
         var transactionUnique = Guid.NewGuid();
         var now = DateTimeOffset.UtcNow;
+
+        // Optional: truncate oversized strings before capture so values in audit logs are consistent
+        if (EnableStringTruncation)
+        {
+            this.TruncateStringsToMaxLength();
+        }
 
         // STEP 1: Capture entity changes BEFORE SaveChanges (while original values are available)
         var entityChangesToSave = CaptureEntityChanges(transactionUnique, now);
@@ -515,6 +545,11 @@ public abstract class ImagileDbContext<TUserKey, TTenantKey> : Microsoft.EntityF
             entity.HasIndex(e => e.EntityChangeId)
                 .HasDatabaseName("IX_EntityChangeProperties_EntityChangeId");
         });
+
+        if (EnableEnumLookupValues)
+        {
+            modelBuilder.ConfigureEnumLookupValues();
+        }
     }
 
     #region Generic Interface Helpers
