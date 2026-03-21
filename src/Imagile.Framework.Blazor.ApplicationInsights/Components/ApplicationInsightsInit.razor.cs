@@ -62,6 +62,13 @@ public partial class ApplicationInsightsInit : ComponentBase, IDisposable
 
         ApplicationInsights.InitJSRuntime(JSRuntime);
 
+        // Explicitly import the JS module to ensure window.blazorApplicationInsights is defined.
+        // The .lib.module.js auto-loading mechanism is not reliable for NuGet-distributed RCLs,
+        // so we import it explicitly here before making any interop calls.
+        await JSRuntime.InvokeAsync<IJSObjectReference>(
+            "import",
+            "./_content/Imagile.Framework.Blazor.ApplicationInsights/Imagile.Framework.Blazor.ApplicationInsights.lib.module.js");
+
         if (Config.Config != null)
         {
             try
