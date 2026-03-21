@@ -79,6 +79,23 @@ public static class IServiceCollectionExtensions
         {
             var config = new Config();
             builder(config);
+
+            // Extract instrumentationKey from connectionString if not explicitly set.
+            // The App Insights JS SDK v3 checks for instrumentationKey during initialization;
+            // providing it alongside connectionString prevents the "Please provide instrumentation key" warning.
+            if (config.ConnectionString != null && config.InstrumentationKey == null)
+            {
+                foreach (var segment in config.ConnectionString.Split(';'))
+                {
+                    var idx = segment.IndexOf('=');
+                    if (idx > 0 && segment[..idx].Equals("InstrumentationKey", StringComparison.OrdinalIgnoreCase))
+                    {
+                        config.InstrumentationKey = segment[(idx + 1)..];
+                        break;
+                    }
+                }
+            }
+
             initConfig.Config = config;
         }
 
