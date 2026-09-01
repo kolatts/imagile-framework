@@ -1,0 +1,107 @@
+name: Claude Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    # Skip forks and third-party bots. Allow human-authored PRs plus PRs created
+    # by Imagile Bot through the triage/maintenance workflows on claude/* branches.
+    if: |
+      github.event.pull_request.head.repo.fork == false &&
+      (
+        !endsWith(github.event.pull_request.user.login, '[bot]') ||
+        github.event.pull_request.user.login == 'claude[bot]' ||
+        (
+          github.event.pull_request.user.login == 'imagile-bot[bot]' &&
+          startsWith(github.event.pull_request.head.ref, 'claude/')
+        )
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect review workflow changes
+        id: review-workflow
+        shell: bash
+        run: |
+          if git diff --quiet \
+            '${{ github.event.pull_request.base.sha }}' \
+            '${{ github.event.pull_request.head.sha }}' \
+            -- .github/workflows/claude-review.yml; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Claude Code Review
+        uses: anthropics/claude-code-action@v1.0.93
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Claude's app token gives ordinary PRs a distinct reviewer identity.
+          # A workflow-token fallback is required when this workflow itself changes,
+          # because the Claude app validates it against the default-branch version.
+          github_token: ${{ steps.review-workflow.outputs.changed == 'true' && github.token || '' }}
+          allowed_bots: 'imagile-bot'
+          track_progress: true
+          classify_inline_comments: 'true'
+          include_fix_links: 'true'
+          plugin_marketplaces: |
+            https://github.com/kolatts/claude-marketplace.git
+          plugins: |
+            sunny
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+            PR AUTHOR: ${{ github.event.pull_request.user.login }}
+            REVIEW ACTOR: ${{ steps.review-workflow.outputs.changed == 'true' && 'github-actions[bot]' || 'claude[bot]' }}
+
+            **Before doing anything else, read and clean up stale Claude feedback:**
+            1. Fetch all previous Claude comments on this PR and read them to retain context:
+               gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments --jq '.[] | select(.user.login == "claude[bot]") | {id: .id, body: .body}'
+            2. Note any issues or concerns raised in those previous comments — you will carry this context into your review.
+            3. Delete each previous Claude comment by ID:
+               gh api repos/${{ github.repository }}/issues/comments/<id> -X DELETE
+               (repeat for every ID returned in step 1)
+            4. Dismiss any previous Claude formal review on this PR.
+            5. Resolve any outdated inline review comment threads from previous Claude reviews.
+
+            **Now review the pull request:**
+
+            Review this pull request for the Imagile.Framework repository — a set of
+            .NET 10 NuGet packages (Core enum attributes, EF Core auditing/seeding,
+            EF convention testing, Configuration, Azure Storage, Blazor Application Insights).
+            Read CLAUDE.md first for conventions. Focus on:
+            1. Correctness and public API design (these are published NuGet packages; breaking
+               changes and API surface growth need justification)
+            2. Adherence to CLAUDE.md conventions: no abbreviations, XML docs on all public
+               APIs, one type per file, interface-first design, generic key types
+            3. Database patterns: naming conventions, audit/soft-delete behavior, enum
+               seeding correctness, query filter interactions
+            4. AOT/trimming compatibility (analysis is enabled; avoid new IL warnings)
+            5. Test coverage: new public behavior should have xUnit tests following
+               MethodName_Scenario_ExpectedBehavior naming
+
+            Leave inline comments on specific lines and a top-level summary.
+            Skip nitpicks; prioritize substantive feedback.
+
+            **When you are done, submit a GitHub review using one of:**
+            - `gh pr review ${{ github.event.pull_request.number }} --approve --body "..."` — if no substantive issues found
+            - `gh pr review ${{ github.event.pull_request.number }} --request-changes --body "..."` — if there are blocking problems
+
+            Do not leave a human-authored PR without a formal APPROVE or REQUEST_CHANGES state.
+          claude_args: |
+            --model sonnet --allowedTools "mcp__github__pull_request_review_write,mcp__github__add_comment_to_pending_review,mcp__github__add_issue_comment,mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr review:*),Bash(gh api repos/*/issues/*/comments:*),Bash(gh api repos/*/issues/comments/*:*),Bash(gh api repos/*/pulls/*/reviews:*),Bash(gh api repos/*/pulls/*/comments:*)"
