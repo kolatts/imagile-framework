@@ -1,0 +1,107 @@
+name: Claude Scheduled Maintenance
+
+on:
+  schedule:
+    # Every Monday at 13:00 UTC (morning US time) — weekly dependency and
+    # repository health pass.
+    - cron: '0 13 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: claude-maintenance
+  cancel-in-progress: false
+
+jobs:
+  maintenance:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Generate Imagile Bot token
+        # A GitHub App token instead of GITHUB_TOKEN for two reasons: the PR gets
+        # a distinct bot identity, and PRs created with GITHUB_TOKEN do not
+        # trigger other workflows — the Claude Review workflow would never run
+        # on the maintenance PR.
+        id: imagile-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.IMAGILE_BOT_APP_ID }}
+          private-key: ${{ secrets.IMAGILE_BOT_PRIVATE_KEY }}
+          # No `permission-workflows: write` — the maintenance agent must not be
+          # able to rewrite CI.
+          permission-contents: write
+          permission-pull-requests: write
+          permission-issues: write
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.imagile-token.outputs.token }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore Imagile.Framework.sln
+
+      - name: Claude Maintenance
+        uses: anthropics/claude-code-action@v1.0.213
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ steps.imagile-token.outputs.token }}
+          plugin_marketplaces: |
+            https://github.com/kolatts/claude-marketplace.git
+          plugins: |
+            sunny
+          prompt: |
+            You are the weekly maintenance agent for the Imagile.Framework repository —
+            a set of .NET 10 NuGet packages managed with Central Package Management
+            (Directory.Packages.props). Read CLAUDE.md first.
+
+            Your job this run:
+
+            1. Check every package in Directory.Packages.props against the latest
+               version on NuGet.org (query https://api.nuget.org/v3-flatcontainer/<lowercase-id>/index.json
+               and take the latest stable, non-prerelease version). Respect these
+               standing holds:
+               - FluentAssertions: stay on the 7.x line. 8.x moved to a paid license
+                 for commercial use; never bump to 8.x or later.
+               - Microsoft.ApplicationInsights: stay on the 2.x line unless a
+                 maintainer removes this hold; 3.x is a breaking major rework.
+               - xunit: stay on the 2.x line (xunit v3 is a different package and a
+                 deliberate migration, not a bump).
+               For any other major-version jump, take it only if the build and tests
+               pass; otherwise hold the line and note why in the PR body.
+
+            2. Apply the bumps to Directory.Packages.props, then verify:
+               - `dotnet restore Imagile.Framework.sln`
+               - `dotnet build Imagile.Framework.sln --configuration Release`
+               - `dotnet test Imagile.Framework.sln --configuration Release`
+               If a specific bump breaks the build or tests, revert that one bump,
+               keep the rest, and record the failure in the PR body.
+
+            3. If and only if at least one version changed and the build and tests
+               pass:
+               - Create a branch named `claude/maintenance-${{ github.run_id }}`.
+               - Commit with a `chore(deps):` conventional-commit message listing the
+                 bumps, ending with the Co-Authored-By line per CLAUDE.md.
+               - Push the branch.
+               - Open a PR against the default branch titled
+                 `chore(deps): weekly dependency bump` with a body that lists every
+                 bump (old -> new), every hold honored, and any bump reverted for
+                 breakage. Use `gh pr create`.
+
+            4. If nothing is outdated, do not create a branch, commit, or PR. Write
+               "No updates available" plus the checked-package count to the job
+               summary instead by appending markdown to the file named in the
+               GITHUB_STEP_SUMMARY environment variable.
+
+            Scope rules:
+            - Touch ONLY Directory.Packages.props (and lock files if any exist).
+            - Never modify anything under .github/, src/, tests/, or site/.
+            - Never push directly to the default branch.
+          claude_args: |
+            --model sonnet --max-turns 200 --allowedTools "Read,Glob,Grep,Edit,Write,WebFetch,Bash(curl:*),Bash(dotnet restore:*),Bash(dotnet build:*),Bash(dotnet test:*),Bash(git checkout -b:*),Bash(git add:*),Bash(git commit:*),Bash(git push:*),Bash(git diff:*),Bash(git status:*),Bash(gh pr create:*),Bash(gh pr list:*)"

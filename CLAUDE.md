@@ -2,6 +2,16 @@
 
 This file provides workflow guidance to Claude Code when working with code in this repository.
 
+## Framework Vision
+
+Imagile.Framework is an application framework built around three ideas:
+
+1. **Describe things with enums.** Enums annotated with declarative attributes (`[Category]`, `[Requires]`, `[Includes]`, `[Associated]`, `[NativeName]`, ...) are the single source of truth for domain vocabulary. The framework turns them into database lookup tables, validation rules, and UI metadata — the enum definition IS the documentation.
+2. **Great, fast, scalable, readable databases.** EF Core patterns that keep schemas legible (naming-convention rules enforced by `Imagile.Framework.EntityFrameworkCore.Testing`), fast (int primary keys, indexed lookups, no GUID PKs), and trustworthy (automatic auditing, soft delete with query filters, enum-seeded reference tables kept in sync by `SyncEnumsAsync`/upsert).
+3. **A great basis for viewing and verifying.** Blazor-first UI foundations (telemetry today, components over enum metadata next) and end-to-end test infrastructure so every consuming app starts with working smoke coverage instead of building it from scratch.
+
+When proposing new features, prefer ones that strengthen this loop: enum → schema → seeded data → UI metadata → e2e verification.
+
 ## Code Style and Conventions
 
 ### Naming Standards
@@ -77,13 +87,33 @@ public async Task TrackEvent(EventTelemetry eventTelemetry)
 ### Namespace Organization
 
 **Framework Packages:**
-- `Imagile.Framework.Core` - Zero-dependency foundational types
-- `Imagile.Framework.EntityFrameworkCore` - EF Core extensions and patterns
+- `Imagile.Framework.Core` - Zero-dependency foundational types (enum attributes and extensions)
+- `Imagile.Framework.EntityFrameworkCore` - EF Core extensions: auditing, soft delete, enum seeding, reference entities
+- `Imagile.Framework.EntityFrameworkCore.Testing` - Database naming-convention rules as xUnit tests
+- `Imagile.Framework.Configuration` - Key Vault configuration, AppTokenCredential, validation
+- `Imagile.Framework.Storage` - Azure Queue/Blob abstractions with convention-based initialization
 - `Imagile.Framework.Blazor.ApplicationInsights` - Blazor WASM telemetry
 
 **Folder-to-Namespace Mapping:**
 - Each folder becomes part of the namespace
 - Example: `Models/Context/UserContext.cs` → `Imagile.Framework.Blazor.ApplicationInsights.Models.Context`
+
+## Automation and Public Site
+
+**GitHub Actions (`.github/workflows/`):**
+- `ci.yml` - Build + test on push/PR (`build-and-test` is the required status check for merging)
+- `claude-review.yml` - Claude reviews every non-fork PR as github-actions[bot] with a formal APPROVE / REQUEST_CHANGES, assesses breaking changes and writes the verdict into the PR description (between `claude-breaking-changes` markers), dispatches the feedback loop on REQUEST_CHANGES, and arms auto-merge on APPROVE (needs `CLAUDE_CODE_OAUTH_TOKEN` secret)
+- `claude-pr-feedback.yml` - Implements requested review changes and pushes to the PR branch, re-triggering review; capped at 3 pushed rounds, then labels `needs-human`
+- `claude-triage.yml` - Label an issue `claude-triage` and Claude assesses it, then implements a PR or explains a denial (needs `IMAGILE_BOT_APP_ID` var + `IMAGILE_BOT_PRIVATE_KEY` secret for the Imagile Bot GitHub App)
+- `claude-maintenance.yml` - Weekly scheduled (Mon 13:00 UTC) dependency bump PR via Claude; respects license holds (FluentAssertions 7.x, ApplicationInsights 2.x, xunit 2.x)
+- `pages-deploy.yml` - Deploys `site/` to GitHub Pages on push to main
+- `publish-nuget.yml` - Publishes packages on version tags
+
+**Auto-merge rules:** an APPROVED Claude review arms GitHub auto-merge (squash) for imagile-bot PRs on `claude/*` branches automatically, and for human PRs only when they carry the `auto-merge` label. `no-auto-merge` disables it on any PR; `no-auto-fix` keeps the feedback workflow off a branch. Auto-merge waits for the `build-and-test` required check.
+
+**Public site (`site/`):** A dependency-free static page (no build step) at https://kolatts.github.io/imagile-framework/. Keep it in sync when packages are added or renamed.
+
+**Rules for automated agents:** never modify `.github/` from issue triage; never push directly to main; all automated branches are named `claude/*`.
 
 ## Git Workflow
 
@@ -93,7 +123,7 @@ public async Task TrackEvent(EventTelemetry eventTelemetry)
 ```
 <type>(<scope>): <description>
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+Co-Authored-By: Claude <model name> <noreply@anthropic.com>
 ```
 
 **Types:**
@@ -108,13 +138,13 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
 feat(blazor): add Application Insights telemetry support
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+Co-Authored-By: Claude <model name> <noreply@anthropic.com>
 ```
 
 ```
 fix(ef-core): correct audit timestamp timezone handling
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+Co-Authored-By: Claude <model name> <noreply@anthropic.com>
 ```
 
 ### Pre-Commit Checklist
@@ -168,12 +198,17 @@ dotnet add package Imagile.Framework.Core --version 0.0.1-alpha.1 --source local
 ```
 imagile-framework/
 ├── src/
-│   ├── Imagile.Framework.Core/                           # Zero-dependency package
-│   ├── Imagile.Framework.EntityFrameworkCore/            # EF Core extensions
+│   ├── Imagile.Framework.Core/                           # Zero-dependency package (enum attributes/extensions)
+│   ├── Imagile.Framework.EntityFrameworkCore/            # EF Core extensions (audit, soft delete, enum seeding)
+│   ├── Imagile.Framework.EntityFrameworkCore.Testing/    # DB naming-convention rules as xUnit tests
+│   ├── Imagile.Framework.Configuration/                  # Key Vault config + validation
+│   ├── Imagile.Framework.Storage/                        # Azure Queue/Blob abstractions
 │   └── Imagile.Framework.Blazor.ApplicationInsights/     # Blazor WASM telemetry
 ├── tests/
 │   ├── Imagile.Framework.Core.Tests/
 │   ├── Imagile.Framework.EntityFrameworkCore.Tests/
+│   ├── Imagile.Framework.Configuration.Tests/
+│   ├── Imagile.Framework.Storage.Tests/
 │   └── Imagile.Framework.Blazor.ApplicationInsights.Tests/
 ├── .planning/                                             # GSD workflow artifacts
 ├── Directory.Build.props                                  # Shared build properties

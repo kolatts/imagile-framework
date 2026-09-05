@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Imagile.Framework — describe it once, as an enum</title>
+<meta name="description" content="Imagile.Framework is a set of .NET 10 NuGet packages for enum-driven application development: declarative enums, readable EF Core databases, and Blazor foundations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #141a28;
+    --slate: #1b2233;
+    --slate-2: #232c42;
+    --paper: #f6f5f1;
+    --paper-dim: #e7e5dd;
+    --amber: #e8a33d;
+    --teal: #5fb4a2;
+    --line: #39415a;
+    --muted: #98a0b6;
+    --display: "Bricolage Grotesque", "Segoe UI", sans-serif;
+    --body: "Public Sans", "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+  body {
+    background: var(--slate);
+    color: var(--paper);
+    font-family: var(--body);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  a { color: var(--amber); }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  .wrap { max-width: 68rem; margin: 0 auto; padding: 0 1.25rem; }
+
+  header.top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .brand {
+    font-family: var(--mono);
+    font-size: 1rem;
+    color: var(--paper);
+    text-decoration: none;
+  }
+  .brand b { color: var(--amber); font-weight: 500; }
+  nav.top-nav { display: flex; gap: 1.5rem; }
+  nav.top-nav a {
+    color: var(--muted); text-decoration: none; font-size: .9375rem;
+  }
+  nav.top-nav a:hover { color: var(--paper); }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 4.5rem 0 3.5rem; }
+  .hero h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(2.1rem, 5.2vw, 3.6rem);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    max-width: 21ch;
+  }
+  .hero h1 .en { color: var(--amber); }
+  .hero h1 .db { color: var(--teal); }
+  .hero p.lede {
+    margin-top: 1.25rem;
+    max-width: 54ch;
+    color: var(--muted);
+    font-size: 1.125rem;
+  }
+  .hero p.lede strong { color: var(--paper); font-weight: 600; }
+
+  /* the signature: enum -> table transformation */
+  .xform {
+    margin-top: 3rem;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) 3.5rem minmax(0,1fr);
+    align-items: stretch;
+    gap: 0;
+  }
+  .panel {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--ink);
+    overflow: auto;
+  }
+  .panel-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: .6rem .9rem;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono); font-size: .75rem;
+    color: var(--muted);
+  }
+  .panel-head .tag { letter-spacing: .08em; text-transform: uppercase; }
+  .panel--enum .panel-head .tag { color: var(--amber); }
+  .panel--db .panel-head .tag { color: var(--teal); }
+  .panel pre {
+    padding: 1rem 1.1rem;
+    font-family: var(--mono);
+    font-size: .8125rem;
+    line-height: 1.65;
+    color: var(--paper-dim);
+  }
+  .panel .kw { color: #7da9e8; }
+  .panel .attr { color: var(--amber); }
+  .panel .str { color: #c9a3e0; }
+  .panel .cm { color: #5c6784; }
+  .arrow {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--muted);
+  }
+  .arrow svg { width: 2rem; height: 2rem; }
+  .arrow .lbl {
+    font-family: var(--mono); font-size: .625rem;
+    letter-spacing: .1em; text-transform: uppercase;
+    writing-mode: vertical-rl;
+    margin-top: .5rem;
+    color: var(--muted);
+  }
+  table.seeded {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: var(--mono);
+    font-size: .8125rem;
+  }
+  table.seeded caption {
+    text-align: left; padding: .8rem 1.1rem .2rem;
+    color: var(--teal); font-size: .8125rem;
+  }
+  table.seeded th, table.seeded td {
+    text-align: left;
+    padding: .45rem 1.1rem;
+    border-top: 1px solid #262e45;
+    white-space: nowrap;
+  }
+  table.seeded th { color: var(--muted); font-weight: 500; }
+  table.seeded td { color: var(--paper-dim); }
+  table.seeded td.num { color: #7da9e8; }
+
+  @media (max-width: 760px) {
+    .xform { grid-template-columns: 1fr; }
+    .arrow { padding: .75rem 0; }
+    .arrow svg { transform: rotate(90deg); }
+    .arrow .lbl { writing-mode: horizontal-tb; margin-top: 0; margin-left: .5rem; }
+    .arrow { flex-direction: row; }
+  }
+
+  /* ---------- loop strip ---------- */
+  section { padding: 3.5rem 0; border-top: 1px solid var(--line); }
+  h2 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.6rem;
+    letter-spacing: -0.01em;
+    margin-bottom: .5rem;
+  }
+  .section-lede { color: var(--muted); max-width: 58ch; margin-bottom: 2rem; }
+  .loop {
+    display: flex; flex-wrap: wrap; gap: .5rem 0; align-items: center;
+    font-family: var(--mono); font-size: .875rem;
+  }
+  .loop .step {
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: .45rem 1rem;
+    background: var(--slate-2);
+    white-space: nowrap;
+  }
+  .loop .sep { color: var(--muted); padding: 0 .65rem; }
+
+  /* ---------- packages ---------- */
+  .pkg-list { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .pkg {
+    display: grid;
+    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+    gap: 1rem 2rem;
+    padding: 1.25rem 1.4rem;
+    background: var(--slate);
+  }
+  .pkg:hover { background: var(--slate-2); }
+  .pkg h3 { font-family: var(--mono); font-weight: 500; font-size: .9375rem; overflow-wrap: anywhere; }
+  .pkg h3 .ns { color: var(--muted); }
+  .pkg p { color: var(--muted); font-size: .9375rem; }
+  @media (max-width: 900px) { .pkg { grid-template-columns: 1fr; gap: .25rem; } }
+
+  /* ---------- install ---------- */
+  .install pre {
+    background: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1.1rem 1.3rem;
+    font-family: var(--mono);
+    font-size: .875rem;
+    line-height: 1.8;
+    color: var(--paper-dim);
+    overflow: auto;
+  }
+  .install .cm { color: #5c6784; }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 2rem 0 3rem;
+    color: var(--muted);
+    font-size: .875rem;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="./"><b>Imagile</b>.Framework</a>
+    <nav class="top-nav" aria-label="Site">
+      <a href="#packages">Packages</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/kolatts/imagile-framework">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Describe it once, as an <span class="en">enum</span>.<br>Get a <span class="db">database</span> you can read.</h1>
+      <p class="lede">Imagile.Framework is a set of <strong>.NET&nbsp;10 packages</strong> where annotated enums are the source of truth for your domain vocabulary — and the framework turns them into seeded lookup tables, audited entities, and convention-checked schemas.</p>
+
+      <div class="xform" aria-label="An annotated C# enum and the database table generated from it">
+        <div class="panel panel--enum">
+          <div class="panel-head"><span class="tag">You write</span><span>OrderStatusType.cs</span></div>
+          <pre><span class="kw">public enum</span> OrderStatusType
+{
+    [<span class="attr">Description</span>(<span class="str">"Awaiting payment"</span>)]
+    [<span class="attr">Category</span>(<span class="str">"Open"</span>)]
+    Pending = <span class="num">1</span>,
+
+    [<span class="attr">Description</span>(<span class="str">"Payment received"</span>)]
+    [<span class="attr">Category</span>(<span class="str">"Open"</span>)]
+    [<span class="attr">Requires</span>&lt;PaymentType&gt;(PaymentType.Card,
+                           PaymentType.Invoice)]
+    Paid = <span class="num">2</span>,
+
+    [<span class="attr">Description</span>(<span class="str">"Shipped to customer"</span>)]
+    [<span class="attr">Category</span>(<span class="str">"Closed"</span>)]
+    Shipped = <span class="num">3</span>,
+}</pre>
+        </div>
+        <div class="arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h16m0 0-5-5m5 5-5 5"/></svg>
+          <span class="lbl">SyncEnumsAsync</span>
+        </div>
+        <div class="panel panel--db">
+          <div class="panel-head"><span class="tag">You get</span><span>dbo.OrderStatusTypes</span></div>
+          <table class="seeded">
+            <thead>
+              <tr><th>Id</th><th>Name</th><th>Description</th><th>Category</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="num">1</td><td>Pending</td><td>Awaiting payment</td><td>Open</td></tr>
+              <tr><td class="num">2</td><td>Paid</td><td>Payment received</td><td>Open</td></tr>
+              <tr><td class="num">3</td><td>Shipped</td><td>Shipped to customer</td><td>Closed</td></tr>
+            </tbody>
+          </table>
+          <pre><span class="cm">-- kept in sync at startup; foreign keys</span>
+<span class="cm">-- and joins stay readable in every query</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <section aria-labelledby="loop-h">
+      <h2 id="loop-h">One loop, end to end</h2>
+      <p class="section-lede">Each package strengthens the same cycle — the enum feeds the schema, the schema stays honest under test, and the application layers above inherit the vocabulary.</p>
+      <div class="loop" role="list">
+        <span class="step" role="listitem">enum + attributes</span><span class="sep" aria-hidden="true">→</span>
+        <span class="step" role="listitem">seeded schema</span><span class="sep" aria-hidden="true">→</span>
+        <span class="step" role="listitem">audited entities</span><span class="sep" aria-hidden="true">→</span>
+        <span class="step" role="listitem">convention tests</span><span class="sep" aria-hidden="true">→</span>
+        <span class="step" role="listitem">Blazor telemetry</span>
+      </div>
+    </section>
+
+    <section id="packages" aria-labelledby="pkg-h">
+      <h2 id="pkg-h">Packages</h2>
+      <p class="section-lede">Six focused packages. Core has zero dependencies; everything else builds on it.</p>
+      <div class="pkg-list">
+        <div class="pkg">
+          <h3><span class="ns">Imagile.Framework.</span>Core</h3>
+          <p>Zero-dependency attributes and extensions for describing domains with enums: <code>[Category]</code>, <code>[Requires]</code>, <code>[Includes]</code>, <code>[Associated]</code>, flag helpers, and metadata lookups.</p>
+        </div>
+        <div class="pkg">
+          <h3><span class="ns">Imagile.Framework.</span>EntityFrameworkCore</h3>
+          <p>Enum-seeded lookup tables, reference-entity upsert, automatic Created/Modified auditing with property-level change tracking, soft delete with global query filters, and tenant scoping.</p>
+        </div>
+        <div class="pkg">
+          <h3><span class="ns">Imagile.Framework.</span>EntityFrameworkCore.Testing</h3>
+          <p>Database readability as a test suite: naming-convention rules (plural PascalCase tables, <code>Id</code> primary keys, no nullable booleans, max lengths on strings) that fail your build before they reach a migration.</p>
+        </div>
+        <div class="pkg">
+          <h3><span class="ns">Imagile.Framework.</span>Configuration</h3>
+          <p>Key Vault reference resolution (<code>@KeyVault(SecretName)</code>), <code>AppTokenCredential</code> for Azure auth, and fail-fast configuration validation.</p>
+        </div>
+        <div class="pkg">
+          <h3><span class="ns">Imagile.Framework.</span>Storage</h3>
+          <p>Type-safe Azure Queue and Blob abstractions — implement <code>IQueueMessage</code> or <code>IBlobContainer</code> and the framework names, registers, and creates the resources.</p>
+        </div>
+        <div class="pkg">
+          <h3><span class="ns">Imagile.Framework.</span>Blazor.ApplicationInsights</h3>
+          <p>Application Insights for Blazor WebAssembly: automatic page tracking, error boundaries, <code>ILogger</code> shipping, and custom telemetry initializers.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="install" class="install" aria-labelledby="install-h">
+      <h2 id="install-h">Install</h2>
+      <p class="section-lede">Packages target .NET 10 with Native AOT and trimming analysis enabled.</p>
+      <pre><span class="cm"># start with the zero-dependency core</span>
+dotnet add package Imagile.Framework.Core
+
+<span class="cm"># add the pieces you need</span>
+dotnet add package Imagile.Framework.EntityFrameworkCore
+dotnet add package Imagile.Framework.EntityFrameworkCore.Testing
+dotnet add package Imagile.Framework.Configuration
+dotnet add package Imagile.Framework.Storage
+dotnet add package Imagile.Framework.Blazor.ApplicationInsights</pre>
+    </section>
+  </main>
+
+  <footer>
+    <span>© Imagile. MIT licensed.</span>
+    <span><a href="https://github.com/kolatts/imagile-framework">Source on GitHub</a></span>
+  </footer>
+</div>
+</body>
+</html>

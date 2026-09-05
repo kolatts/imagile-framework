@@ -1,0 +1,274 @@
+name: Claude Review
+
+# Reviews are submitted with the workflow's own GITHUB_TOKEN, so they are
+# authored by github-actions[bot]. Two consequences shape this file:
+#
+# 1. github-actions[bot] is never the PR author (triage/maintenance PRs belong
+#    to imagile-bot[bot], human PRs to their humans), so formal APPROVE /
+#    REQUEST_CHANGES reviews are possible on every PR. The Claude app token
+#    cannot submit formal reviews at all — they fall back to plain comments.
+#
+# 2. Events raised by the default GITHUB_TOKEN do not trigger other workflows,
+#    so a CHANGES_REQUESTED review from this job will NOT fire
+#    claude-pr-feedback.yml's `pull_request_review` trigger. The "Trigger
+#    feedback loop" step below closes that gap by dispatching the feedback
+#    workflow explicitly. Remove that step and the review loop goes dead.
+#
+# APPROVE additionally requires the repo setting "Allow GitHub Actions to
+# create and approve pull requests" (Settings → Actions → General → Workflow
+# permissions). REQUEST_CHANGES is not gated by it.
+#
+# The auto-merge step at the bottom uses the Imagile Bot app token, not
+# GITHUB_TOKEN: a merge performed by the default token raises no push event,
+# which would silently skip pages-deploy.yml and publish-nuget.yml on merge.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    # Skip forks and third-party bots. Allow human-authored PRs plus PRs created
+    # by Imagile Bot through the triage/maintenance workflows on claude/* branches.
+    if: |
+      github.event.pull_request.head.repo.fork == false &&
+      (
+        !endsWith(github.event.pull_request.user.login, '[bot]') ||
+        github.event.pull_request.user.login == 'claude[bot]' ||
+        (
+          github.event.pull_request.user.login == 'imagile-bot[bot]' &&
+          startsWith(github.event.pull_request.head.ref, 'claude/')
+        )
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      # `actions: write` is for the feedback-loop dispatch step, not the agent:
+      # the agent's allowedTools contain no `gh workflow` commands, so the wider
+      # scope on its token is not reachable through the tool allowlist.
+      actions: write
+      contents: read
+      # `issues: write` covers deleting previous rounds' tracking comments
+      # (PR conversation comments live on the issues API).
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Claude Code Review
+        uses: anthropics/claude-code-action@v1.0.213
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # The workflow token, always: it can submit formal reviews on every PR
+          # (see header).
+          github_token: ${{ github.token }}
+          # github-actions[bot]'s global account id; comments and reviews from
+          # the workflow token are authored by this identity.
+          bot_id: 41898282
+          bot_name: github-actions[bot]
+          allowed_bots: 'imagile-bot'
+          track_progress: true
+          classify_inline_comments: 'true'
+          include_fix_links: 'true'
+          plugin_marketplaces: |
+            https://github.com/kolatts/claude-marketplace.git
+          plugins: |
+            sunny
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+            PR AUTHOR: ${{ github.event.pull_request.user.login }}
+            REVIEW ACTOR: github-actions[bot]
+
+            **Before doing anything else, read and clean up stale Claude feedback:**
+            1. Fetch all previous review comments on this PR and read them to retain context:
+               gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments --jq '.[] | select(.user.login == "claude[bot]" or .user.login == "github-actions[bot]") | {id: .id, body: .body}'
+            2. Note any issues or concerns raised in those previous comments — you will carry this context into your review.
+            3. Delete each previous comment by ID:
+               gh api repos/${{ github.repository }}/issues/comments/<id> -X DELETE
+               (repeat for every ID returned in step 1)
+               EXCEPTIONS — never delete:
+               - the tracking comment for THIS run (the one you update via update_claude_comment)
+               - any comment containing "claude-pr-feedback-round" (round-limit markers used by the feedback workflow)
+            4. Dismiss any previous formal review from github-actions[bot] on this PR.
+            5. Resolve any outdated inline review comment threads from previous reviews.
+
+            **Now review the pull request:**
+
+            Review this pull request for the Imagile.Framework repository — a set of
+            .NET 10 NuGet packages (Core enum attributes, EF Core auditing/seeding,
+            EF convention testing, Configuration, Azure Storage, Blazor Application
+            Insights). Read CLAUDE.md first for conventions. Focus on:
+            1. Correctness and public API design (these are published NuGet packages;
+               API surface growth needs justification)
+            2. Adherence to CLAUDE.md conventions: no abbreviations, XML docs on all
+               public APIs, one type per file, interface-first design, generic key types
+            3. Database patterns: naming conventions, audit/soft-delete behavior, enum
+               seeding correctness, query filter interactions
+            4. AOT/trimming compatibility (analysis is enabled; avoid new IL warnings)
+            5. Test coverage: new public behavior should have xUnit tests following
+               MethodName_Scenario_ExpectedBehavior naming
+
+            **Breaking-change assessment (required on every review):**
+            These packages are consumed via NuGet, so every review must explicitly
+            assess the public contract. Diff the public API surface of every changed
+            package and classify:
+            - BINARY/SOURCE BREAKS: removed or renamed public types or members, changed
+              signatures or return types, added abstract/interface members, changed
+              generic constraints, narrowed accessibility, changed namespaces
+            - BEHAVIORAL BREAKS: changed defaults, changed exception types, changed
+              database schema conventions or seeding semantics that alter generated
+              schemas or seeded data for existing consumers
+            - DEPENDENCY BREAKS: removed or major-bumped PackageReferences, target
+              framework changes (these change the consumer's dependency graph)
+
+            Then surface the verdict in the PR DESCRIPTION so it travels with the PR:
+            1. Fetch the current body: gh pr view ${{ github.event.pull_request.number }} --json body --jq .body > /tmp/pr-body.md
+            2. Insert or replace the section delimited by the markers
+               `<!-- claude-breaking-changes:start -->` and `<!-- claude-breaking-changes:end -->`
+               (append the section to the end of the body if the markers are absent) with:
+
+               <!-- claude-breaking-changes:start -->
+               ## Breaking changes
+               _Assessed by Claude review on <short head sha>._
+               - either `None detected.` or a bulleted list, each item naming the
+                 package, the API or behavior affected, and what consumers must change
+               <!-- claude-breaking-changes:end -->
+
+            3. Apply it: gh pr edit ${{ github.event.pull_request.number }} --body-file /tmp/pr-body.md
+            Never modify anything in the body outside the markers. Any breaking change
+            must also appear in your top-level review summary, and an undocumented or
+            unjustified breaking change is grounds for REQUEST_CHANGES.
+
+            Leave inline comments on specific lines and a top-level summary.
+            Skip nitpicks; prioritize substantive feedback.
+
+            **When you are done, submit a GitHub review using one of:**
+            - `gh pr review ${{ github.event.pull_request.number }} --approve --body "..."` — if no substantive issues found
+            - `gh pr review ${{ github.event.pull_request.number }} --request-changes --body "..."` — if there are blocking problems
+
+            Do not leave a PR without a formal APPROVE or REQUEST_CHANGES state.
+          claude_args: |
+            --model sonnet --allowedTools "mcp__github__pull_request_review_write,mcp__github__add_comment_to_pending_review,mcp__github__add_issue_comment,mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr review:*),Bash(gh pr edit:*),Bash(gh api repos/*/issues/*/comments:*),Bash(gh api repos/*/issues/comments/*:*),Bash(gh api repos/*/pulls/*/reviews:*),Bash(gh api repos/*/pulls/*/comments:*)"
+
+      # Reviews from the default GITHUB_TOKEN raise no workflow events, so the
+      # feedback loop must be kicked explicitly (see header). Deterministic step
+      # rather than a prompt instruction: the agent's token stays unable to
+      # dispatch workflows via the tool allowlist, and a forgotten instruction
+      # cannot silently kill the loop.
+      - name: Trigger feedback loop on CHANGES_REQUESTED
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          # Scoped to reviews on THIS run's head commit: after the feedback
+          # workflow pushes, earlier CHANGES_REQUESTED reviews keep their old
+          # commit_id, so stale rounds can never re-trigger the loop. State is
+          # matched exactly — a dismissed review reads DISMISSED, not
+          # CHANGES_REQUESTED.
+          #
+          # Fetched to a file first (a failed fetch fails the step instead of
+          # silently reading as "no reviews"), then filtered with jq proper so
+          # HEAD_SHA binds via --arg. Ids + `grep -c`, not `[...] | length`:
+          # --paginate emits one JSON document per page, so a single `length`
+          # would print one count per page on review-heavy PRs.
+          gh api --paginate \
+            "repos/${{ github.repository }}/pulls/${PR_NUMBER}/reviews" \
+            > /tmp/reviews-raw.json
+          # shellcheck disable=SC2016
+          jq -r --arg sha "${HEAD_SHA}" \
+            '.[] | select(.user.login == "github-actions[bot]"
+                          and .commit_id == $sha
+                          and .state == "CHANGES_REQUESTED") | .id' \
+            /tmp/reviews-raw.json > /tmp/cr-reviews.txt
+          COUNT=$(grep -c . /tmp/cr-reviews.txt || true)
+          if [ "${COUNT}" -gt 0 ]; then
+            echo "CHANGES_REQUESTED review found on ${HEAD_SHA} — dispatching claude-pr-feedback"
+            # `gh workflow run` dispatches the DEFAULT-BRANCH version of the
+            # target workflow. Until the review_commit input has merged to main,
+            # passing it returns HTTP 422 — so fall back to pr_number alone
+            # rather than letting a green review read as a red run. The fallback
+            # loses only the stale-review gate for that round.
+            gh workflow run claude-pr-feedback.yml \
+              --repo "${{ github.repository }}" \
+              -f pr_number="${PR_NUMBER}" \
+              -f review_commit="${HEAD_SHA}" || {
+              echo "::warning::Dispatch with review_commit failed (input not on default branch yet?); retrying without it"
+              gh workflow run claude-pr-feedback.yml \
+                --repo "${{ github.repository }}" \
+                -f pr_number="${PR_NUMBER}"
+            }
+          else
+            echo "No CHANGES_REQUESTED review on ${HEAD_SHA}; nothing to dispatch"
+          fi
+
+      # ---- Auto-merge -------------------------------------------------------
+      # If this run's review APPROVED the PR, arm GitHub auto-merge so the PR
+      # merges once branch protection is satisfied (CI green). Scoped to
+      # automation-authored PRs (imagile-bot on claude/* branches) plus any PR a
+      # maintainer labels `auto-merge`; a `no-auto-merge` label switches it off
+      # for any PR. Uses the app token so the merge raises real events —
+      # a GITHUB_TOKEN merge would skip pages-deploy and publish-nuget.
+      - name: Generate Imagile Bot token for auto-merge
+        id: imagile-token
+        if: github.event.pull_request.draft == false
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.IMAGILE_BOT_APP_ID }}
+          private-key: ${{ secrets.IMAGILE_BOT_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Enable auto-merge when approved
+        if: github.event.pull_request.draft == false
+        env:
+          GH_TOKEN: ${{ steps.imagile-token.outputs.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          # Eligibility: automation PRs by default, humans by opt-in label.
+          gh pr view "$PR_NUMBER" --repo "${{ github.repository }}" \
+            --json labels --jq '[.labels[].name]' > /tmp/labels.json
+          if jq -e 'index("no-auto-merge")' /tmp/labels.json >/dev/null; then
+            echo "PR carries 'no-auto-merge'; leaving merge to a human"
+            exit 0
+          fi
+          AUTOMATION_PR=false
+          if [ "$PR_AUTHOR" = "imagile-bot[bot]" ] && [[ "$HEAD_REF" == claude/* ]]; then
+            AUTOMATION_PR=true
+          fi
+          if [ "$AUTOMATION_PR" != "true" ] && ! jq -e 'index("auto-merge")' /tmp/labels.json >/dev/null; then
+            echo "Human-authored PR without 'auto-merge' label; leaving merge to a human"
+            exit 0
+          fi
+
+          # Only arm auto-merge when THIS head commit holds an APPROVED review
+          # from the review identity. Same fetch-to-file discipline as above.
+          gh api --paginate \
+            "repos/${{ github.repository }}/pulls/${PR_NUMBER}/reviews" \
+            > /tmp/reviews-raw.json
+          # shellcheck disable=SC2016
+          jq -r --arg sha "${HEAD_SHA}" \
+            '.[] | select(.user.login == "github-actions[bot]"
+                          and .commit_id == $sha
+                          and .state == "APPROVED") | .id' \
+            /tmp/reviews-raw.json > /tmp/approved.txt
+          APPROVED=$(grep -c . /tmp/approved.txt || true)
+          if [ "${APPROVED}" -eq 0 ]; then
+            echo "No APPROVED review on ${HEAD_SHA}; not arming auto-merge"
+            exit 0
+          fi
+
+          echo "Approved — enabling auto-merge (squash)"
+          # --auto waits for branch protection (required CI checks); if the PR is
+          # already mergeable GitHub merges immediately, which is the same outcome.
+          gh pr merge "$PR_NUMBER" --repo "${{ github.repository }}" --auto --squash
