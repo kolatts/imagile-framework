@@ -101,12 +101,15 @@ public async Task TrackEvent(EventTelemetry eventTelemetry)
 ## Automation and Public Site
 
 **GitHub Actions (`.github/workflows/`):**
-- `ci.yml` - Build + test on push/PR
-- `claude-review.yml` - Claude reviews every non-fork PR (needs `CLAUDE_CODE_OAUTH_TOKEN` secret)
+- `ci.yml` - Build + test on push/PR (`build-and-test` is the required status check for merging)
+- `claude-review.yml` - Claude reviews every non-fork PR as github-actions[bot] with a formal APPROVE / REQUEST_CHANGES, assesses breaking changes and writes the verdict into the PR description (between `claude-breaking-changes` markers), dispatches the feedback loop on REQUEST_CHANGES, and arms auto-merge on APPROVE (needs `CLAUDE_CODE_OAUTH_TOKEN` secret)
+- `claude-pr-feedback.yml` - Implements requested review changes and pushes to the PR branch, re-triggering review; capped at 3 pushed rounds, then labels `needs-human`
 - `claude-triage.yml` - Label an issue `claude-triage` and Claude assesses it, then implements a PR or explains a denial (needs `IMAGILE_BOT_APP_ID` var + `IMAGILE_BOT_PRIVATE_KEY` secret for the Imagile Bot GitHub App)
 - `claude-maintenance.yml` - Weekly scheduled (Mon 13:00 UTC) dependency bump PR via Claude; respects license holds (FluentAssertions 7.x, ApplicationInsights 2.x, xunit 2.x)
 - `pages-deploy.yml` - Deploys `site/` to GitHub Pages on push to main
 - `publish-nuget.yml` - Publishes packages on version tags
+
+**Auto-merge rules:** an APPROVED Claude review arms GitHub auto-merge (squash) for imagile-bot PRs on `claude/*` branches automatically, and for human PRs only when they carry the `auto-merge` label. `no-auto-merge` disables it on any PR; `no-auto-fix` keeps the feedback workflow off a branch. Auto-merge waits for the `build-and-test` required check.
 
 **Public site (`site/`):** A dependency-free static page (no build step) at https://kolatts.github.io/imagile-framework/. Keep it in sync when packages are added or renamed.
 
